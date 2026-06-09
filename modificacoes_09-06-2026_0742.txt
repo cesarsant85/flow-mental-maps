@@ -1,0 +1,19 @@
+Aplique as seguintes modificações/correções ao projeto:
+
+- Ao salvar o arquivo .html ele criará uma cópia exata do arquivo original com todas as suas funcionalidades e constará como projeto inicial todas as informações e configurações que  estiverem na tela; antes de salvar será perguntado o nome do arquivo.
+
+- Aperfeiçoe a visualização para que a fonte permaneça harmonizada com o tamanho dos cards em caso de muito zoom out.
+
+- Aperfeiçoe o "Modo apresentação" para que, em vez de travar as funcionalidades, ele permita passar dando zoom e enfase cada hierarquia card por card usando o "click" ou "enter" ou "Barra de espaço" com uma animação suave entre cada um deles.
+
+- Adicione um botão "Organizar" que organize harmoniosamente todos os cards que estiverem abertos na tela.
+
+- Adicione um botão "Disposição" que organize "Da esquerda para a direita" ou "De cima para baixo".
+
+- Aplique paleta de cores hamoniosa aos cards por geração e as linhas que as ligam;
+
+- Adicione um botão "Cores" para alternar diversas paletas de cores, para adequação em apresentações em salas com diferentes iluminações, tanto claras quanto escuras. Ou seja o botão "Tema" escolhe o modo "Claro" e "Escuro" e o botão "Cores" alterna diferentes paletas dentro de cada modo.
+
+- Modifique a função do "duplo clique" em um card, faça com que, ao ser duplamente clicado o card receba foco e seja exibido em tela cheia centralizado.
+
+- Transforme todos os botões configurações em um menu de canto que expanda, exceto a opção "tela cheia".

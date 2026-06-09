@@ -1,0 +1,20 @@
+Quero gerar um web app de mapas mentais com java, css e html inline, ou seja apenas um único arquivo html. Nome da aplicação "Flow", Desenvolvedor: César Santana. 
+
+As funcionalidades devem ser:
+
+- Opção de zoom in e out utilizando o botão de rolagem do mouse, também aumentando o tamanho da fonte das palavras.
+
+- A aplicação deve conter os botões de tema claro e escuro, fonte legivel feita para apresentações em projetor em salas claras ou escuras.
+
+- Deve conter um botão de salvar a apresentação atual em um arquivo .html que editável com as mesmas funções para apresentação. 
+
+- Deve conter um botão para visualização em tela cheia, porém quando aberto, nativamente seja aberto em tela cheia.
+
+- O modo de edição será iniciado ao abrir o arquivo, sendo que tambem constará um botão para Modo apresentação, onde a edição ficará e apenas a movimentação, zoom in e out ficação disponíveis.
+
+- O visual deve ser moderno, fonte legível, linhas suaves para ligar os pontos, animação suave e opção de arrastar cada ponto sendo seguido pelas linhas que as ligam, sendo possivel rearranjar as ideias e as derivadas.
+
+- Cada ponto poderá ser criado, editado ou excluido. Poderá também ocultar seus pontos derivados ou expandí-los. 
+
+- Cada ponto, se apresentará tanto como uma palavra ou frase quando um título e um pequeno texto abaixo. Quando o mouse parar em cima do ponto, este receberá foco aparecendos os botões de edição: (+)Adicionar derivado; Editar; Excluir.
+

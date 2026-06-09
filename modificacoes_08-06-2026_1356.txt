@@ -1,0 +1,3 @@
+Aplique as seguintes modificações/correções ao projeto:
+
+- Modifique o sistema de salvamento das informações de apresentação, crie um sistema que salve o projeto como arquivo o mais simples possivel, mas que possa ser lido pelo Flow.html e restaurado integralmente.
