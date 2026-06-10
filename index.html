@@ -372,6 +372,16 @@ body.presenting .node:hover{transform:none!important;}
 .mbtn.p{background:var(--c0);color:#fff;}
 .mbtn.s{background:var(--bg);color:var(--sub);}
 
+/* ════ KBD BADGES ════ */
+.fi-label kbd{
+  display:inline-block;
+  background:var(--panel-b);border:1px solid var(--node-b);
+  border-radius:5px;padding:1px 5px;
+  font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;
+  color:var(--sub);margin-left:4px;
+  pointer-events:none;
+}
+
 /* ════ TOAST ════ */
 #toast{
   position:fixed;bottom:72px;left:50%;
@@ -395,59 +405,66 @@ body.presenting .node:hover{transform:none!important;}
   <div id="fab-items">
 
     <div class="fab-row">
-      <button class="fi" id="btn-new" title="Novo Nó Raiz">
+      <button class="fi" id="btn-new" title="Novo Nó Raiz (N)">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
       </button>
-      <span class="fi-label">Novo Nó</span>
+      <span class="fi-label">Novo Nó <kbd>N</kbd></span>
     </div>
 
     <div class="fab-row">
-      <button class="fi danger" id="btn-clear" title="Limpar">
+      <button class="fi danger" id="btn-clear" title="Limpar Tudo (Shift+Del)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
       </button>
-      <span class="fi-label">Limpar Tudo</span>
+      <span class="fi-label">Limpar Tudo <kbd>⇧Del</kbd></span>
     </div>
 
     <div class="fab-row">
-      <button class="fi" id="btn-arrange" title="Organizar">
+      <button class="fi" id="btn-arrange" title="Organizar (O)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
       </button>
-      <span class="fi-label">Organizar</span>
+      <span class="fi-label">Organizar <kbd>O</kbd></span>
     </div>
 
     <div class="fab-row">
-      <button class="fi" id="btn-dir" title="Disposição">
+      <button class="fi" id="btn-dir" title="Disposição (D)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="dir-icon"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
-      <span class="fi-label" id="dir-label">Esquerda → Direita</span>
+      <span class="fi-label" id="dir-label">Esquerda → Direita <kbd>D</kbd></span>
     </div>
 
     <div class="fab-row">
-      <button class="fi" id="btn-theme" title="Claro / Escuro">
+      <button class="fi" id="btn-theme" title="Claro / Escuro (T)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="theme-icon"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
-      <span class="fi-label" id="theme-label">Tema Claro</span>
+      <span class="fi-label" id="theme-label">Tema Claro <kbd>T</kbd></span>
     </div>
 
     <div class="fab-row">
-      <button class="fi" id="btn-colors" title="Paleta de Cores">
+      <button class="fi" id="btn-colors" title="Paleta de Cores (C)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/><circle cx="6.5" cy="11.5" r="1.5" fill="currentColor"/><circle cx="9.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="14.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="17.5" cy="11.5" r="1.5" fill="currentColor"/></svg>
       </button>
-      <span class="fi-label" id="colors-label">Paleta: Padrão</span>
+      <span class="fi-label" id="colors-label">Paleta: Padrão <kbd>C</kbd></span>
     </div>
 
     <div class="fab-row">
-      <button class="fi" id="btn-present" title="Modo Apresentação">
+      <button class="fi" id="btn-present" title="Modo Apresentação (P)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
       </button>
-      <span class="fi-label">Apresentação</span>
+      <span class="fi-label">Apresentação <kbd>P</kbd></span>
     </div>
 
     <div class="fab-row">
-      <button class="fi" id="btn-save" title="Salvar HTML">
+      <button class="fi" id="btn-load" title="Carregar arquivo .flow (L)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </button>
+      <span class="fi-label">Carregar .flow <kbd>L</kbd></span>
+    </div>
+
+    <div class="fab-row">
+      <button class="fi" id="btn-save" title="Salvar arquivo .flow (S)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
       </button>
-      <span class="fi-label">Salvar HTML</span>
+      <span class="fi-label">Salvar .flow <kbd>S</kbd></span>
     </div>
 
   </div>
@@ -507,7 +524,7 @@ body.presenting .node:hover{transform:none!important;}
 <!-- Save modal -->
 <div id="moverlay-save" class="moverlay">
   <div class="mbox">
-    <div class="mh">Salvar como HTML</div>
+    <div class="mh">Salvar como .flow</div>
     <div class="mf"><label>Nome do arquivo</label><input type="text" id="save-fname" value="Flow" autocomplete="off"/></div>
     <div class="macts">
       <button class="mbtn s" id="msave-cancel">Cancelar</button>
@@ -518,6 +535,9 @@ body.presenting .node:hover{transform:none!important;}
     </div>
   </div>
 </div>
+
+<!-- Hidden file loader -->
+<input type="file" id="flow-file-input" accept=".flow,.json" style="display:none">
 
 <!-- Toast -->
 <div id="toast"></div>
@@ -834,7 +854,7 @@ function openSaveModal(){
 function closeSaveModal(){ moSave.classList.remove('open'); }
 document.getElementById('msave-confirm').onclick=()=>{
   let name=document.getElementById('save-fname').value.trim()||'Flow';
-  if(!name.toLowerCase().endsWith('.html'))name+='.html';
+  if(!name.toLowerCase().endsWith('.flow'))name+='.flow';
   closeSaveModal();doExport(name);
 };
 document.getElementById('msave-cancel').onclick=closeSaveModal;
@@ -911,12 +931,49 @@ function exitPresentation(){
 }
 function buildPresentSeq(){
   presentSeq=[];
-  const roots=nodes.filter(n=>n.parent===null);
-  const queue=[...roots];
-  while(queue.length){
-    const n=queue.shift();
-    if(isVisible(n.id))presentSeq.push(n.id);
-    ch(n.id).forEach(c=>queue.push(c));
+  /* Find starting node: selected node or first root */
+  const selEl=viewport.querySelector('.node.selected');
+  const startId=selEl?selEl.dataset.id:null;
+
+  /* DFS: go all the way down each branch before moving to next sibling */
+  function dfs(id){
+    if(!isVisible(id))return;
+    presentSeq.push(id);
+    const children=ch(id);
+    const node=nodes.find(n=>n.id===id);
+    if(node&&node.collapsed)return;
+    children.forEach(c=>dfs(c.id));
+  }
+
+  if(startId&&nodes.find(n=>n.id===startId)){
+    /* Start from selected node — DFS from there */
+    dfs(startId);
+    /* Then traverse remaining nodes at first level (roots and their trees) not yet visited */
+    const visited=new Set(presentSeq);
+    /* Collect all root-level peers of startId's root */
+    const startNode=nodes.find(n=>n.id===startId);
+    /* Find root of the selected node */
+    let rootOfStart=startNode;
+    while(rootOfStart&&rootOfStart.parent) rootOfStart=nodes.find(n=>n.id===rootOfStart.parent);
+    const roots=nodes.filter(n=>n.parent===null);
+    /* Visit roots that come after the selected subtree first, then those before */
+    const rootIdx=roots.findIndex(r=>r.id===rootOfStart.id);
+    const after=roots.slice(rootIdx+1);
+    const before=roots.slice(0,rootIdx);
+    [...after,...before].forEach(r=>{
+      /* DFS only unvisited nodes in each subtree */
+      function dfsUnvisited(id){
+        if(!isVisible(id)||visited.has(id))return;
+        presentSeq.push(id);visited.add(id);
+        const node=nodes.find(n=>n.id===id);
+        if(node&&node.collapsed)return;
+        ch(id).forEach(c=>dfsUnvisited(c.id));
+      }
+      dfsUnvisited(r.id);
+    });
+  } else {
+    /* No selection: DFS from all roots */
+    nodes.filter(n=>n.parent===null).forEach(r=>dfs(r.id));
   }
 }
 function advancePresent(){
@@ -982,7 +1039,7 @@ document.getElementById('btn-dir').onclick=()=>{
   closeFab();
   layoutDir=layoutDir==='lr'?'td':'lr';
   const lbl=layoutDir==='lr'?'Esquerda → Direita':'Cima ↓ Baixo';
-  document.getElementById('dir-label').textContent=lbl;
+  document.getElementById('dir-label').innerHTML=lbl+' <kbd>D</kbd>';
   const ico=document.getElementById('dir-icon');
   ico.innerHTML=layoutDir==='lr'?'<path d="M5 12h14M12 5l7 7-7 7"/>':'<path d="M12 5v14M5 12l7 7 7-7"/>';
   layoutTree();render();fitAll();save();toast('Disposição: '+lbl);
@@ -990,7 +1047,7 @@ document.getElementById('btn-dir').onclick=()=>{
 document.getElementById('btn-theme').onclick=()=>{
   closeFab();darkMode=!darkMode;
   document.body.classList.toggle('dark',darkMode);
-  document.getElementById('theme-label').textContent=darkMode?'Tema Escuro':'Tema Claro';
+  document.getElementById('theme-label').innerHTML=(darkMode?'Tema Escuro':'Tema Claro')+' <kbd>T</kbd>';
   save();toast(darkMode?'Tema Escuro':'Tema Claro');
 };
 document.getElementById('btn-colors').onclick=()=>{
@@ -998,10 +1055,24 @@ document.getElementById('btn-colors').onclick=()=>{
   paletteIdx=(paletteIdx+1)%palettes.length;
   palette=palettes[paletteIdx];
   document.body.dataset.palette=palette==='default'?'':palette;
-  document.getElementById('colors-label').textContent='Paleta: '+paletteNames[palette];
+  document.getElementById('colors-label').innerHTML='Paleta: '+paletteNames[palette]+' <kbd>C</kbd>';
   render();save();toast('Paleta: '+paletteNames[palette]);
 };
 document.getElementById('btn-present').onclick=()=>{ closeFab();togglePresentation(); };
+document.getElementById('btn-load').onclick=()=>{ closeFab();document.getElementById('flow-file-input').click(); };
+document.getElementById('flow-file-input').onchange=e=>{
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const state=JSON.parse(ev.target.result);
+      applyState(state);
+      toast('"'+file.name+'" carregado!');
+    }catch(err){toast('Erro ao ler arquivo .flow');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+};
 
 /* ── KEYBOARD ── */
 document.addEventListener('keydown',e=>{
@@ -1018,9 +1089,45 @@ document.addEventListener('keydown',e=>{
     return;
   }
   if(e.key==='Escape')return;
-  if(e.key==='Delete'){
-    const sel=viewport.querySelector('.node.selected');
-    if(sel)confirmDel(sel.dataset.id);
+  const tag=document.activeElement.tagName;
+  const typing=tag==='INPUT'||tag==='TEXTAREA';
+  if(!typing){
+    if(e.key==='Delete'&&e.shiftKey){
+      if(!nodes.length)return;
+      if(!confirm('Limpar toda a apresentação?'))return;
+      nodes=[];render();save();toast('Apresentação limpa.');return;
+    }
+    if(e.key==='Delete'){
+      const sel=viewport.querySelector('.node.selected');
+      if(sel)confirmDel(sel.dataset.id);return;
+    }
+    const k=e.key.toLowerCase();
+    if(k==='n'){ openRootModal();return; }
+    if(k==='s'){ openSaveModal();return; }
+    if(k==='l'){ document.getElementById('flow-file-input').click();return; }
+    if(k==='o'){ layoutTree();render();fitAll();toast('Nós organizados!');return; }
+    if(k==='p'){ togglePresentation();return; }
+    if(k==='t'){
+      darkMode=!darkMode;
+      document.body.classList.toggle('dark',darkMode);
+      document.getElementById('theme-label').innerHTML=(darkMode?'Tema Escuro':'Tema Claro')+' <kbd>T</kbd>';
+      save();toast(darkMode?'Tema Escuro':'Tema Claro');return;
+    }
+    if(k==='c'){
+      paletteIdx=(paletteIdx+1)%palettes.length;
+      palette=palettes[paletteIdx];
+      document.body.dataset.palette=palette==='default'?'':palette;
+      document.getElementById('colors-label').innerHTML='Paleta: '+paletteNames[palette]+' <kbd>C</kbd>';
+      render();save();toast('Paleta: '+paletteNames[palette]);return;
+    }
+    if(k==='d'){
+      layoutDir=layoutDir==='lr'?'td':'lr';
+      const lbl=layoutDir==='lr'?'Esquerda → Direita':'Cima ↓ Baixo';
+      document.getElementById('dir-label').innerHTML=lbl+' <kbd>D</kbd>';
+      const ico=document.getElementById('dir-icon');
+      ico.innerHTML=layoutDir==='lr'?'<path d="M5 12h14M12 5l7 7-7 7"/>':'<path d="M12 5v14M5 12l7 7 7-7"/>';
+      layoutTree();render();fitAll();save();toast('Disposição: '+lbl);return;
+    }
   }
 });
 
@@ -1032,7 +1139,7 @@ workspace.addEventListener('click',e=>{
   if(nd)nd.classList.add('selected');
 });
 
-/* ── PERSIST ── */
+/* ── PERSIST (localStorage auto-save) ── */
 function save(){
   try{
     localStorage.setItem('flow_v5_nodes',JSON.stringify(nodes));
@@ -1050,57 +1157,52 @@ function load(){
     if(p&&palettes.includes(p)){
       palette=p;paletteIdx=palettes.indexOf(p);
       if(p!=='default')document.body.dataset.palette=p;
-      document.getElementById('colors-label').textContent='Paleta: '+paletteNames[p];
+      document.getElementById('colors-label').innerHTML='Paleta: '+paletteNames[p]+' <kbd>C</kbd>';
     }
     const d=localStorage.getItem('flow_v5_dir');
     if(d==='td'){
       layoutDir='td';
-      document.getElementById('dir-label').textContent='Cima ↓ Baixo';
+      document.getElementById('dir-label').innerHTML='Cima ↓ Baixo <kbd>D</kbd>';
       document.getElementById('dir-icon').innerHTML='<path d="M12 5v14M5 12l7 7 7-7"/>';
     }
   }catch(e){nodes=[];}
 }
 setInterval(save,4000);
 
-/* ── EXPORT ── */
+/* ── APPLY STATE (from .flow file) ── */
+function applyState(s){
+  nodes=JSON.parse(JSON.stringify(s.nodes||[]));
+  darkMode=!!s.dark;
+  document.body.classList.toggle('dark',darkMode);
+  document.getElementById('theme-label').innerHTML=darkMode?'Tema Escuro <kbd>T</kbd>':'Tema Claro <kbd>T</kbd>';
+  if(s.palette&&palettes.includes(s.palette)){
+    palette=s.palette;paletteIdx=palettes.indexOf(palette);
+    document.body.dataset.palette=palette==='default'?'':palette;
+    document.getElementById('colors-label').innerHTML='Paleta: '+paletteNames[palette]+' <kbd>C</kbd>';
+  } else {
+    palette='default';paletteIdx=0;delete document.body.dataset.palette;
+    document.getElementById('colors-label').innerHTML='Paleta: Padrão <kbd>C</kbd>';
+  }
+  if(s.layoutDir&&s.layoutDir!=='lr'){
+    layoutDir='td';
+    document.getElementById('dir-label').innerHTML='Cima ↓ Baixo <kbd>D</kbd>';
+    document.getElementById('dir-icon').innerHTML='<path d="M12 5v14M5 12l7 7 7-7"/>';
+  } else {
+    layoutDir='lr';
+    document.getElementById('dir-label').innerHTML='Esquerda → Direita <kbd>D</kbd>';
+    document.getElementById('dir-icon').innerHTML='<path d="M5 12h14M12 5l7 7-7 7"/>';
+  }
+  layoutTree();render();
+  setTimeout(()=>fitAll(false),80);
+  save();
+}
+
+/* ── EXPORT as .flow ── */
 function doExport(filename){
   save();
   const state={nodes:JSON.parse(JSON.stringify(nodes)),dark:darkMode,palette,layoutDir};
-  const injected=`<script id="__FS__">var __FLOW_STATE__=${JSON.stringify(state)};<\/script>`;
-  const loader=`<script id="__FL__">
-(function(){
-  if(typeof __FLOW_STATE__==='undefined')return;
-  try{
-    var s=__FLOW_STATE__;
-    nodes=JSON.parse(JSON.stringify(s.nodes));
-    darkMode=!!s.dark;
-    if(darkMode)document.body.classList.add('dark');
-    if(s.palette&&s.palette!=='default'){
-      palette=s.palette;
-      paletteIdx=['default','ocean','forest','sunset','mono'].indexOf(palette);
-      document.body.dataset.palette=palette;
-      var pn={default:'Padrão',ocean:'Oceano',forest:'Floresta',sunset:'Pôr do Sol',mono:'Monocromático'};
-      document.getElementById('colors-label').textContent='Paleta: '+pn[palette];
-    }
-    if(s.layoutDir&&s.layoutDir!=='lr'){
-      layoutDir='td';
-      document.getElementById('dir-label').textContent='Cima \u2193 Baixo';
-      document.getElementById('dir-icon').innerHTML='<path d="M12 5v14M5 12l7 7 7-7"/>';
-    }
-    layoutTree();render();
-    setTimeout(function(){fitAll(false);},80);
-  }catch(e){console.error('Flow loader:',e);}
-})();
-<\/script>`;
-
-  let src=document.documentElement.outerHTML;
-  /* strip previously injected blocks */
-  src=src.replace(/<script id="__FS__">[\s\S]*?<\/script>/g,'');
-  src=src.replace(/<script id="__FL__">[\s\S]*?<\/script>/g,'');
-  /* inject before </body> */
-  src=src.replace('</body>',injected+loader+'</body>');
-
-  const blob=new Blob([src],{type:'text/html;charset=utf-8'});
+  const json=JSON.stringify(state);
+  const blob=new Blob([json],{type:'application/json;charset=utf-8'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;a.download=filename;a.click();
