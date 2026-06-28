@@ -163,7 +163,7 @@ body.dark #workspace{
 }
 
 /* ════ FULLSCREEN BTN (top-right) ════ */
-#fs-zone{position:fixed;top:0;right:0;width:80px;height:60px;z-index:9998;}
+#fs-zone{position:fixed;top:0;right:0;width:130px;height:60px;z-index:9998;}
 #btn-fs{
   position:fixed;top:16px;right:16px;z-index:9999;
   width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;
@@ -176,6 +176,79 @@ body.dark #workspace{
 }
 #btn-fs.visible{opacity:1;pointer-events:all;}
 #btn-fs:hover{background:var(--c0);color:#fff;transform:scale(1.08);}
+
+/* ════ ABOUT BTN (top-right, beside fullscreen) ════ */
+#btn-about{
+  position:fixed;top:16px;right:68px;z-index:9999;
+  height:42px;padding:0 16px;border-radius:50px;border:none;cursor:pointer;
+  background:var(--panel);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--panel-b);color:var(--text);
+  box-shadow:var(--shadow-sm);
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s,background .18s,transform .18s,color .18s;
+}
+#btn-about.visible{opacity:1;pointer-events:all;}
+#btn-about:hover{background:var(--c0);color:#fff;transform:scale(1.05);}
+
+/* ════ ABOUT OVERLAY ════ */
+#about-overlay{
+  display:none;position:fixed;inset:0;z-index:999990;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(12px);
+  align-items:center;justify-content:center;cursor:pointer;
+}
+#about-overlay.show{display:flex;}
+#about-card{
+  background:var(--node);
+  border-radius:24px;
+  padding:36px 40px;
+  width:min(400px,92vw);
+  box-shadow:var(--shadow-lg);
+  animation:mIn .22s cubic-bezier(.34,1.56,.64,1);
+  cursor:default;pointer-events:all;
+  position:relative;
+}
+#about-card-close{
+  position:absolute;top:14px;right:14px;
+  width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--bg);color:var(--sub);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:background .18s,color .18s;
+}
+#about-card-close:hover{background:var(--danger);color:#fff;}
+#about-accent{
+  position:absolute;top:0;left:0;width:5px;height:100%;
+  border-radius:24px 0 0 24px;background:var(--c0);
+}
+#about-name{
+  font-family:'DM Serif Display',serif;font-size:22px;
+  color:var(--text);margin-bottom:20px;
+}
+#about-body{display:flex;gap:20px;align-items:flex-start;}
+#about-info{flex:1;}
+.about-row{
+  display:flex;align-items:center;gap:9px;
+  margin-bottom:12px;
+  font-size:13px;font-weight:500;
+  color:var(--sub);
+}
+.about-row a{color:var(--c0);text-decoration:none;transition:opacity .15s;}
+.about-row a:hover{opacity:.75;}
+.about-row svg{flex-shrink:0;opacity:.55;}
+#about-qr{
+  width:90px;height:90px;flex-shrink:0;
+  border-radius:12px;overflow:hidden;
+  border:1.5px solid var(--node-b);
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+}
+#about-qr img{width:100%;height:100%;object-fit:cover;display:block;}
+#about-footer{
+  margin-top:20px;padding-top:16px;border-top:1.5px solid var(--node-b);
+  font-size:11px;font-weight:500;color:var(--sub);
+  text-align:center;letter-spacing:.04em;opacity:.6;
+}
 
 /* ════ LOGO ════ */
 #logo{
@@ -478,6 +551,49 @@ body.presenting .node:hover{transform:none!important;}
     <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
   </svg>
 </button>
+
+<!-- About button -->
+<button id="btn-about" title="Sobre o desenvolvedor">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+  Sobre
+</button>
+
+<!-- About overlay -->
+<div id="about-overlay">
+  <div id="about-card">
+    <div id="about-accent"></div>
+    <button id="about-card-close">&#x2715;</button>
+    <div id="about-name">César Santana</div>
+    <div id="about-body">
+      <div id="about-info">
+        <div class="about-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Desenvolvedor
+        </div>
+        <div class="about-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          <a href="https://instagram.com/cesarsant_" target="_blank">instagram.com/cesarsant_</a>
+        </div>
+        <div class="about-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          <a href="https://github.com/cesarsant85" target="_blank">github.com/cesarsant85</a>
+        </div>
+        <div class="about-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Sousa &mdash; Paraíba
+        </div>
+        <div class="about-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Experimente a versão minimalista: <a href="#" target="_blank">em breve</a>
+        </div>
+      </div>
+      <div id="about-qr">
+        <img src="images/code.png" alt="QR Code" onerror="this.style.display='none';this.parentNode.innerHTML='<span style=&quot;font-size:10px;color:var(--sub);text-align:center;padding:6px&quot;>QR Code</span>'">
+      </div>
+    </div>
+    <div id="about-footer">2026 &middot; Flow &mdash; Mapas Mentais - Versão 1.1</div>
+  </div>
+</div>
 
 <!-- Workspace -->
 <div id="workspace">
@@ -998,11 +1114,17 @@ function focusPresentNode(idx){
 /* ── FULLSCREEN ── */
 let fsTimer;
 const btnFs=document.getElementById('btn-fs');
+const btnAbout=document.getElementById('btn-about');
 const fsZone=document.getElementById('fs-zone');
-function showFs(){ btnFs.classList.add('visible');clearTimeout(fsTimer);fsTimer=setTimeout(()=>btnFs.classList.remove('visible'),2500); }
+function showFs(){
+  btnFs.classList.add('visible');btnAbout.classList.add('visible');
+  clearTimeout(fsTimer);fsTimer=setTimeout(()=>{btnFs.classList.remove('visible');btnAbout.classList.remove('visible');},2500);
+}
 fsZone.addEventListener('mouseenter',showFs);
-btnFs.addEventListener('mouseenter',()=>{ clearTimeout(fsTimer);btnFs.classList.add('visible'); });
-btnFs.addEventListener('mouseleave',()=>{ fsTimer=setTimeout(()=>btnFs.classList.remove('visible'),800); });
+btnFs.addEventListener('mouseenter',()=>{ clearTimeout(fsTimer);btnFs.classList.add('visible');btnAbout.classList.add('visible'); });
+btnFs.addEventListener('mouseleave',()=>{ fsTimer=setTimeout(()=>{btnFs.classList.remove('visible');btnAbout.classList.remove('visible');},800); });
+btnAbout.addEventListener('mouseenter',()=>{ clearTimeout(fsTimer);btnFs.classList.add('visible');btnAbout.classList.add('visible'); });
+btnAbout.addEventListener('mouseleave',()=>{ fsTimer=setTimeout(()=>{btnFs.classList.remove('visible');btnAbout.classList.remove('visible');},800); });
 function toggleFS(){ if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});else document.exitFullscreen(); }
 btnFs.onclick=toggleFS;
 document.addEventListener('fullscreenchange',()=>{
@@ -1013,6 +1135,12 @@ document.addEventListener('fullscreenchange',()=>{
     ico.innerHTML='<polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>';
   }
 });
+
+/* ── ABOUT ── */
+const aboutOverlay=document.getElementById('about-overlay');
+btnAbout.onclick=()=>aboutOverlay.classList.add('show');
+document.getElementById('about-card-close').onclick=()=>aboutOverlay.classList.remove('show');
+aboutOverlay.addEventListener('click',e=>{if(e.target===aboutOverlay)aboutOverlay.classList.remove('show');});
 
 /* ── FAB ── */
 fabMain.onclick=()=>{
