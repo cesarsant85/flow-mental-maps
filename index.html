@@ -321,6 +321,7 @@ body.dark #workspace{
   display:none;gap:4px;
   filter:drop-shadow(0 4px 12px rgba(0,0,0,.2));
 }
+.is-touch .node-actions{ display:flex; } /* sempre visível em touch */
 body.presenting .node-actions{display:none!important;}
 body.presenting .node{cursor:default!important;}
 body.presenting .node:hover{transform:none!important;}
@@ -466,6 +467,63 @@ body.presenting .node:hover{transform:none!important;}
   pointer-events:none;white-space:nowrap;
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ════ MOBILE / TOUCH RESPONSIVE ════ */
+.is-touch #btn-fs,
+.is-touch #btn-about{
+  opacity:1!important;pointer-events:all!important;
+}
+
+/* Na tela pequena, esconder kbd badges */
+@media(max-width:600px){
+  .fi-label kbd{ display:none; }
+  .fi-label{ font-size:11px; padding:4px 10px; }
+
+  /* FAB maior para toque */
+  #fab-main{ width:60px;height:60px;font-size:28px; }
+  .fi{ width:50px;height:50px;font-size:20px; }
+
+  /* Botões de ação nos nós maiores */
+  .na{ width:34px;height:34px;font-size:15px; }
+  .node-actions{ top:-17px; }
+
+  /* modeBadge não sobrepor FAB */
+  #modeBadge{ bottom:90px;right:12px;padding:6px 12px;font-size:10px; }
+
+  /* Toast mais alto para não cobrir badge */
+  #toast{ bottom:150px; }
+
+  /* btn-about/fs visíveis no topo */
+  #btn-fs{ opacity:1!important;pointer-events:all!important; }
+  #btn-about{ opacity:1!important;pointer-events:all!important;right:68px; }
+
+  /* Card focus com padding menor */
+  #card-focus-inner{ padding:28px 24px; }
+
+  /* Modal box ocupa mais tela */
+  .mbox{ padding:22px 18px; }
+
+  /* nós um pouco menores */
+  .node{ min-width:140px;max-width:220px;padding:10px 12px 10px 16px; }
+  .node-title{ font-size:15px!important; }
+  .node-body{ font-size:11px!important; }
+
+  /* pcount (contador de apresentação) */
+  #pcount{ font-size:11px;padding:5px 14px; }
+  .pcount-hint{ display:none; }
+
+  /* about card */
+  #about-card{ padding:28px 20px; }
+  #about-body{ flex-direction:column;gap:14px; }
+  #about-qr{ width:70px;height:70px; }
+}
+
+/* Telas pequenas em landscape */
+@media(max-width:900px) and (orientation:landscape){
+  #fab-main{ width:52px;height:52px; }
+  .fi{ width:46px;height:46px; }
+  #modeBadge{ bottom:80px; }
+}
 </style>
 </head>
 <body>
@@ -611,7 +669,7 @@ body.presenting .node:hover{transform:none!important;}
 <!-- Present counter -->
 <div id="pcount">
   <span id="pcnt-text">1 / 1</span>
-  <span class="pcount-hint">← → Navegar · Esc Sair</span>
+  <span class="pcount-hint" id="pcount-hint">← → Navegar · Esc Sair</span>
 </div>
 
 <!-- Card focus overlay (dblclick) -->
@@ -1018,7 +1076,140 @@ workspace.addEventListener('wheel',e=>{
   applyTransform();updateFonts();
 },{passive:false});
 
-/* ── PRESENTATION MODE ── */
+/* ── TOUCH SUPPORT ── */
+(function(){
+  /* Detect touch device */
+  function detectTouch(){
+    if('ontouchstart' in window || navigator.maxTouchPoints>0){
+      document.body.classList.add('is-touch');
+    }
+  }
+  detectTouch();
+
+  let touchDragNode=null, touchDragOffX=0, touchDragOffY=0;
+  let touchPanActive=false, lastTouchX=0, lastTouchY=0;
+  let pinchActive=false, pinchDist0=0, pinchScale0=1, pinchMid={x:0,y:0};
+  let tapTimer=null, tapTarget=null, lastTap=0;
+
+  function getTouchDist(t){ return Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY); }
+  function getTouchMid(t){ return {x:(t[0].clientX+t[1].clientX)/2, y:(t[0].clientY+t[1].clientY)/2}; }
+
+  workspace.addEventListener('touchstart',e=>{
+    if(presentationMode){ return; }
+    const touches=e.touches;
+
+    if(touches.length===2){
+      e.preventDefault();
+      pinchActive=true; touchPanActive=false; touchDragNode=null;
+      pinchDist0=getTouchDist(touches);
+      pinchScale0=scale;
+      pinchMid=getTouchMid(touches);
+      return;
+    }
+
+    if(touches.length===1){
+      const t=touches[0];
+      const nodeEl=t.target.closest('.node');
+      const actionEl=t.target.closest('.node-actions');
+
+      if(nodeEl&&!actionEl){
+        e.preventDefault();
+        const node=nodes.find(n=>n.id===nodeEl.dataset.id);
+        if(node){
+          touchDragNode=node;
+          touchDragOffX=(t.clientX-panX)/scale-node.x;
+          touchDragOffY=(t.clientY-panY)/scale-node.y;
+
+          /* Double-tap detection */
+          const now=Date.now();
+          if(tapTarget===nodeEl.dataset.id && now-lastTap<350){
+            clearTimeout(tapTimer);
+            touchDragNode=null;
+            openCardFocus(nodeEl.dataset.id);
+            lastTap=0; tapTarget=null;
+            return;
+          }
+          lastTap=now; tapTarget=nodeEl.dataset.id;
+        }
+      } else if(!actionEl){
+        e.preventDefault();
+        touchPanActive=true;
+        lastTouchX=t.clientX; lastTouchY=t.clientY;
+      }
+    }
+  },{passive:false});
+
+  workspace.addEventListener('touchmove',e=>{
+    if(presentationMode) return;
+    const touches=e.touches;
+
+    if(pinchActive&&touches.length===2){
+      e.preventDefault();
+      const newDist=getTouchDist(touches);
+      const f=newDist/pinchDist0;
+      const prev=scale;
+      scale=Math.max(0.15,Math.min(5,pinchScale0*f));
+      const r=workspace.getBoundingClientRect();
+      const mx=pinchMid.x-r.left, my=pinchMid.y-r.top;
+      panX=mx-(mx-panX)*(scale/prev);
+      panY=my-(my-panY)*(scale/prev);
+      applyTransform(); updateFonts();
+      return;
+    }
+
+    if(touches.length===1){
+      e.preventDefault();
+      const t=touches[0];
+      if(touchDragNode){
+        touchDragNode.x=(t.clientX-panX)/scale-touchDragOffX;
+        touchDragNode.y=(t.clientY-panY)/scale-touchDragOffY;
+        const el=viewport.querySelector(`[data-id="${touchDragNode.id}"]`);
+        if(el){el.style.left=touchDragNode.x+'px';el.style.top=touchDragNode.y+'px';}
+        drawConnections();
+      } else if(touchPanActive){
+        panX+=t.clientX-lastTouchX; panY+=t.clientY-lastTouchY;
+        lastTouchX=t.clientX; lastTouchY=t.clientY;
+        applyTransform();
+      }
+    }
+  },{passive:false});
+
+  workspace.addEventListener('touchend',e=>{
+    if(touchDragNode){ save(); touchDragNode=null; }
+    if(e.touches.length<2) pinchActive=false;
+    if(e.touches.length===0) touchPanActive=false;
+  });
+
+  /* Swipe to navigate in presentation mode */
+  let swipeStartX=0, swipeStartY=0;
+  workspace.addEventListener('touchstart',e=>{
+    if(!presentationMode) return;
+    swipeStartX=e.touches[0].clientX;
+    swipeStartY=e.touches[0].clientY;
+  },{passive:true});
+  workspace.addEventListener('touchend',e=>{
+    if(!presentationMode) return;
+    const dx=e.changedTouches[0].clientX-swipeStartX;
+    const dy=e.changedTouches[0].clientY-swipeStartY;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){
+      if(dx<0) advancePresent(); else retreatPresent();
+    } else if(Math.abs(dx)<10&&Math.abs(dy)<10){
+      advancePresent();
+    }
+  },{passive:true});
+
+  /* Show top buttons on any touch on the fs-zone area or on timeout */
+  document.addEventListener('touchstart',()=>{
+    btnFs.classList.add('visible'); btnAbout.classList.add('visible');
+    clearTimeout(fsTimer);
+    fsTimer=setTimeout(()=>{
+      if(!document.documentElement.classList.contains('is-touch')){
+        btnFs.classList.remove('visible'); btnAbout.classList.remove('visible');
+      }
+    }, 3500);
+  },{passive:true});
+})();
+
 function togglePresentation(){
   presentationMode=!presentationMode;
   document.body.classList.toggle('presenting',presentationMode);
@@ -1361,7 +1552,14 @@ function toast(msg,dur=2200){
   }
   layoutTree();render();
   setTimeout(()=>fitAll(false),100);
-  setTimeout(()=>{ try{document.documentElement.requestFullscreen();}catch(e){} },350);
+  /* Auto-fullscreen apenas em desktop */
+  const isTouch='ontouchstart' in window||navigator.maxTouchPoints>0;
+  if(!isTouch){ setTimeout(()=>{ try{document.documentElement.requestFullscreen();}catch(e){} },350); }
+  /* Ajusta dica de apresentação para touch */
+  if(isTouch){
+    const hint=document.getElementById('pcount-hint');
+    if(hint) hint.textContent='← → Deslizar · Toque Sair';
+  }
   setTimeout(showFs,900);
 })();
 
