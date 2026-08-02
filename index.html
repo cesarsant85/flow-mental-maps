@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Flow — Mapas Mentais &amp; Apresentações</title>
+<title>Flow | Mental Maps | versão 2.0.1</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@500&display=swap');
 
@@ -267,6 +267,31 @@ body.presenting .node-actions{display:none!important;}
 body.presenting .node{cursor:default!important;}
 body.presenting .node:hover{transform:none!important;}
 
+/* ═════ AUTO-HIDE DE CONTROLES NA APRESENTAÇÃO ═════ */
+body.presenting #topbar,
+body.presenting #fab-wrap,
+body.presenting #modeBadge,
+body.presenting #pcount,
+body.presenting #pbar-track{
+  opacity:0;pointer-events:none;
+  transition:opacity .35s ease;
+}
+body.presenting #topbar *,
+body.presenting #fab-wrap *{
+  pointer-events:none!important;
+}
+body.presenting.show-controls #topbar,
+body.presenting.show-controls #fab-wrap,
+body.presenting.show-controls #modeBadge,
+body.presenting.show-controls #pcount,
+body.presenting.show-controls #pbar-track{
+  opacity:1;pointer-events:all;
+}
+body.presenting.show-controls #topbar *,
+body.presenting.show-controls #fab-wrap *{
+  pointer-events:all!important;
+}
+
 .na{
   width:28px;height:28px;border:none;border-radius:50%;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
@@ -450,15 +475,39 @@ body.presenting .node:hover{transform:none!important;}
 .exinfo .extitle{font-weight:700;font-size:14.5px;color:var(--text);}
 .exinfo .exdesc{font-size:12px;color:var(--sub-dim);margin-top:1px;}
 
-/* shortcuts modal */
-.kbrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--panel-b);font-size:13px;}
-.kbrow:last-child{border-bottom:none;}
-.kbrow span{color:var(--sub);}
-.kbrow kbd{background:var(--bg);border:1px solid var(--node-b);border-radius:6px;padding:3px 8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:var(--text);}
-
 /* checkbox row */
 .chkrow{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--sub);margin-top:4px;cursor:pointer;}
 .chkrow input{width:16px;height:16px;accent-color:var(--c0);cursor:pointer;}
+
+/* ═════ CUSTOM COLORS PANEL ═════ */
+.ccpresets{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:22px;}
+.ccpreset-btn{
+  display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;
+  background:var(--bg);border:1.5px solid var(--node-b);border-radius:14px;
+  padding:14px 8px;cursor:pointer;color:var(--text);
+  transition:border-color .15s,transform .15s,background .15s;
+}
+.ccpreset-btn:hover{border-color:var(--c0);transform:translateY(-2px);}
+.cc-preset-ico{font-size:20px;line-height:1;}
+.ccpreset-btn span span,.ccpreset-btn>span:last-child{font-size:12px;font-weight:700;color:var(--text);}
+.ccpreset-btn small{display:block;font-size:10.5px;font-weight:400;color:var(--sub-dim);margin-top:3px;line-height:1.3;}
+.ccgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
+.ccitem{
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+  background:var(--bg);border:1.5px solid var(--node-b);border-radius:12px;
+  padding:9px 12px;transition:border-color .15s;
+}
+.ccitem:hover{border-color:var(--c0);}
+.ccitem span{font-size:12px;font-weight:600;color:var(--sub);}
+.ccitem input[type=color]{
+  -webkit-appearance:none;appearance:none;width:30px;height:30px;flex-shrink:0;
+  border:none;border-radius:50%;cursor:pointer;padding:0;background:none;
+  box-shadow:0 0 0 2px var(--panel-b);
+}
+.ccitem input[type=color]::-webkit-color-swatch-wrapper{padding:0;border-radius:50%;}
+.ccitem input[type=color]::-webkit-color-swatch{border:none;border-radius:50%;}
+.ccitem input[type=color]::-moz-color-swatch{border:none;border-radius:50%;}
+@media(max-width:600px){.ccpresets{grid-template-columns:1fr;}}
 
 /* ═════ MODE BADGE ═════ */
 #modeBadge{
@@ -523,16 +572,11 @@ body.presenting .node:hover{transform:none!important;}
     <div id="tb-project" title="Gerenciar projetos">Meu Mapa</div>
   </div>
   <div id="tb-right">
-    <button class="tb-btn" id="btn-search" title="Buscar (Ctrl+F)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <button class="tb-btn" id="btn-about" title="Sobre">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
     </button>
-    <button class="tb-btn" id="btn-undo" title="Desfazer (Ctrl+Z)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M3 10h10a5 5 0 015 5v0a5 5 0 01-5 5H9"/><polyline points="8 4 3 10 8 16"/></svg></button>
-    <button class="tb-btn" id="btn-redo" title="Refazer (Ctrl+Shift+Z)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M21 10H11a5 5 0 00-5 5v0a5 5 0 005 5h6"/><polyline points="16 4 21 10 16 16"/></svg></button>
-    <button class="tb-btn" id="btn-help" title="Atalhos (?)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 2-3 4"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    </button>
-    <button class="tb-btn" id="btn-theme2" title="Claro/Escuro (T)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" id="theme-icon2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <button class="tb-btn" id="btn-custom-colors" title="Personalizar Cores (C)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/><circle cx="6.5" cy="11.5" r="1.5" fill="currentColor"/><circle cx="9.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="14.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="17.5" cy="11.5" r="1.5" fill="currentColor"/></svg>
     </button>
     <button class="tb-btn" id="btn-fs" title="Tela Cheia (F11)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" id="fs-icon"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
@@ -583,13 +627,6 @@ body.presenting .node:hover{transform:none!important;}
     </div>
 
     <div class="fab-row">
-      <button class="fi" id="btn-colors" title="Paleta de Cores (C)">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/><circle cx="6.5" cy="11.5" r="1.5" fill="currentColor"/><circle cx="9.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="14.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="17.5" cy="11.5" r="1.5" fill="currentColor"/></svg>
-      </button>
-      <span class="fi-label" id="colors-label">Paleta: Aurora <kbd>C</kbd></span>
-    </div>
-
-    <div class="fab-row">
       <button class="fi" id="btn-present" title="Modo Apresentação (P)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
       </button>
@@ -597,10 +634,10 @@ body.presenting .node:hover{transform:none!important;}
     </div>
 
     <div class="fab-row">
-      <button class="fi" id="btn-export" title="Exportar">
+      <button class="fi" id="btn-export" title="Importar/Exportar">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </button>
-      <span class="fi-label">Exportar <kbd>E</kbd></span>
+      <span class="fi-label">Importar/Exportar <kbd>E</kbd></span>
     </div>
 
     <div class="fab-row">
@@ -608,13 +645,6 @@ body.presenting .node:hover{transform:none!important;}
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
       </button>
       <span class="fi-label">Meus Projetos</span>
-    </div>
-
-    <div class="fab-row">
-      <button class="fi" id="btn-about" title="Sobre">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-      </button>
-      <span class="fi-label">Sobre</span>
     </div>
 
   </div>
@@ -696,16 +726,8 @@ body.presenting .node:hover{transform:none!important;}
 <!-- Export modal -->
 <div id="moverlay-export" class="moverlay">
   <div class="mbox">
-    <div class="mh">Exportar</div>
-    <div class="msub">Escolha como deseja exportar seu mapa mental.</div>
-    <div class="exrow" id="ex-pdf">
-      <div class="exicon">📑</div>
-      <div class="exinfo"><div class="extitle">Apresentação em PDF</div><div class="exdesc">Um slide por card, pronto para exibir ou enviar</div></div>
-    </div>
-    <div class="exrow" id="ex-png">
-      <div class="exicon">🖼️</div>
-      <div class="exinfo"><div class="extitle">Imagem PNG do mapa</div><div class="exdesc">Uma captura de todo o mapa mental</div></div>
-    </div>
+    <div class="mh">Importar/Exportar</div>
+    <div class="msub">Escolha como deseja importar ou exportar seu mapa mental.</div>
     <div class="exrow" id="ex-flow">
       <div class="exicon">💾</div>
       <div class="exinfo"><div class="extitle">Arquivo .flow</div><div class="exdesc">Salva para editar depois no Flow</div></div>
@@ -743,15 +765,6 @@ body.presenting .node:hover{transform:none!important;}
   </div>
 </div>
 
-<!-- Shortcuts modal -->
-<div id="moverlay-help" class="moverlay">
-  <div class="mbox">
-    <div class="mh">Atalhos de teclado</div>
-    <div id="kb-list"></div>
-    <div class="macts"><button class="mbtn s" id="help-close">Fechar</button></div>
-  </div>
-</div>
-
 <!-- About modal -->
 <div id="moverlay-about" class="moverlay">
   <div class="mbox">
@@ -768,9 +781,46 @@ body.presenting .node:hover{transform:none!important;}
         <a href="https://instagram.com/cesarsant" target="_blank" rel="noopener">instagram.com/cesarsant_</a>
         <a href="https://cesarsant85.github.io/flow-mental-maps/" target="_blank" rel="noopener">cesarsant85.github.io/flow-mental-maps/</a>
       </div>
-      <div class="about-version">Flow - Mapas mentais v.1.5 | 2026 | Sousa - Paraíba</div>
+      <div class="about-version">Flow - Mental Maps v.2.0.1 | 2026 | Sousa - Paraíba</div>
     </div>
     <div class="macts"><button class="mbtn s" id="about-close">Fechar</button></div>
+  </div>
+</div>
+
+<!-- Custom colors modal -->
+<div id="moverlay-customcolors" class="moverlay">
+  <div class="mbox wide">
+    <div class="mh">Personalizar Cores</div>
+    <div class="msub">Ajuste a cor de cada elemento separadamente, ou aplique uma combinação pronta para a iluminação da sala de apresentação.</div>
+
+    <div class="ccpresets">
+      <button class="ccpreset-btn" id="cc-preset-bright">
+        <span class="cc-preset-ico">☀️</span>
+        <span>Sala muito clara<small>Alto contraste para ambientes iluminados</small></span>
+      </button>
+      <button class="ccpreset-btn" id="cc-preset-dark">
+        <span class="cc-preset-ico">🌙</span>
+        <span>Sala muito escura<small>Cores suaves, sem excesso de brilho</small></span>
+      </button>
+      <button class="ccpreset-btn" id="cc-preset-reset">
+        <span class="cc-preset-ico">↺</span>
+        <span>Padrão<small>Restaura o tema original (Aurora)</small></span>
+      </button>
+    </div>
+
+    <div class="ccgrid" id="cc-grid">
+      <label class="ccitem"><input type="color" id="cc-bg" data-key="bg"><span>Fundo</span></label>
+      <label class="ccitem"><input type="color" id="cc-text" data-key="text"><span>Fonte principal</span></label>
+      <label class="ccitem"><input type="color" id="cc-sub" data-key="sub"><span>Fonte secundária</span></label>
+      <label class="ccitem"><input type="color" id="cc-panel" data-key="panel"><span>Painéis / Menus</span></label>
+      <label class="ccitem"><input type="color" id="cc-node" data-key="node"><span>Fundo dos cards</span></label>
+      <label class="ccitem"><input type="color" id="cc-nodeB" data-key="nodeB"><span>Borda dos cards</span></label>
+      <label class="ccitem"><input type="color" id="cc-line" data-key="line"><span>Linhas de conexão</span></label>
+      <label class="ccitem"><input type="color" id="cc-accent" data-key="accent"><span>Cor de destaque</span></label>
+      <label class="ccitem"><input type="color" id="cc-accent2" data-key="accent2"><span>Destaque secundário</span></label>
+    </div>
+
+    <div class="macts"><button class="mbtn s" id="cc-close">Fechar</button></div>
   </div>
 </div>
 
@@ -936,6 +986,55 @@ function placeTD(id,depth,xc){
   });
 }
 
+/* ── REORGANIZE (harmonic animation) ── */
+let isAnimatingLayout=false;
+function easeInOutCubic(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+function animateLayoutTween(oldPos,newPos,duration=560){
+  return new Promise(resolve=>{
+    const els={};
+    viewport.querySelectorAll('.node').forEach(el=>{ els[el.dataset.id]=el; });
+    const start=performance.now();
+    function frame(now){
+      const t=Math.min(1,(now-start)/duration);
+      const e=easeInOutCubic(t);
+      nodes.forEach(n=>{
+        const p=newPos[n.id];if(!p)return;
+        const o=oldPos[n.id]||p;
+        n.x=o.x+(p.x-o.x)*e;
+        n.y=o.y+(p.y-o.y)*e;
+        const el=els[n.id];
+        if(el){ el.style.left=n.x+'px';el.style.top=n.y+'px'; }
+      });
+      drawConnections();
+      if(t<1){ requestAnimationFrame(frame); }
+      else{
+        nodes.forEach(n=>{ const p=newPos[n.id]; if(p){ n.x=p.x;n.y=p.y; } });
+        resolve();
+      }
+    }
+    requestAnimationFrame(frame);
+  });
+}
+async function reorganize(msg){
+  if(isAnimatingLayout)return;
+  if(!nodes.length)return;
+  isAnimatingLayout=true;
+  viewport.style.pointerEvents='none';
+  pushHistory();
+  const oldPos={};
+  nodes.forEach(n=>{ oldPos[n.id]={x:n.x,y:n.y}; });
+  layoutTree();
+  const newPos={};
+  nodes.forEach(n=>{ newPos[n.id]={x:n.x,y:n.y}; });
+  nodes.forEach(n=>{ const o=oldPos[n.id];if(o){n.x=o.x;n.y=o.y;} });
+  render();
+  await animateLayoutTween(oldPos,newPos);
+  render();fitAll();save();
+  viewport.style.pointerEvents='';
+  isAnimatingLayout=false;
+  toast(msg||'Nós organizados!');
+}
+
 /* ── RENDER ── */
 function render(){
   viewport.querySelectorAll('.node').forEach(el=>el.remove());
@@ -1065,8 +1164,8 @@ function redo(){
   render();save();updateUndoRedoButtons();toast('Refeito');
 }
 function updateUndoRedoButtons(){
-  document.getElementById('btn-undo').disabled=!history.length;
-  document.getElementById('btn-redo').disabled=!future.length;
+  /* botões de desfazer/refazer removidos da interface; desfazer/refazer
+     continuam disponíveis via atalhos de teclado (Ctrl+Z / Ctrl+Shift+Z) */
 }
 
 /* ── CARD FOCUS OVERLAY (double click/tap) ── */
@@ -1324,6 +1423,22 @@ workspace.addEventListener('wheel',e=>{
 const PRESENT_BASE_SCALE=1.8;
 const PRESENT_ZOOM_MIN=0.5,PRESENT_ZOOM_MAX=2.5,PRESENT_ZOOM_STEP=0.15;
 let presentZoomFactor=1;
+let presentControlsTimer=null;
+function showPresentControls(){
+  if(!presentationMode)return;
+  document.body.classList.add('show-controls');
+  clearTimeout(presentControlsTimer);
+  presentControlsTimer=setTimeout(()=>{
+    document.body.classList.remove('show-controls');
+  },2200);
+}
+function hidePresentControlsNow(){
+  clearTimeout(presentControlsTimer);
+  document.body.classList.remove('show-controls');
+}
+document.addEventListener('mousemove',()=>{ if(presentationMode)showPresentControls(); });
+document.addEventListener('pointermove',()=>{ if(presentationMode)showPresentControls(); });
+document.addEventListener('touchstart',()=>{ if(presentationMode)showPresentControls(); },{passive:true});
 function togglePresentation(){
   presentationMode=!presentationMode;
   document.body.classList.toggle('presenting',presentationMode);
@@ -1341,14 +1456,16 @@ function togglePresentation(){
     if(!document.fullscreenElement){
       document.documentElement.requestFullscreen().catch(()=>{});
     }
+    hidePresentControlsNow();
   } else {
     exitPresentation();
   }
 }
-function exitPresentation(){
+function exitPresentation(keepFullscreen){
   presentationMode=false;
   stopAutoplay();
   document.body.classList.remove('presenting');
+  hidePresentControlsNow();
   document.getElementById('btn-present').classList.remove('active');
   modeLabel.textContent='Modo Edição';
   modeBadge.style.color='var(--sub)';
@@ -1357,7 +1474,7 @@ function exitPresentation(){
   presentZoomFactor=1;
   viewport.querySelectorAll('.present-focus').forEach(el=>el.classList.remove('present-focus'));
   render();
-  if(document.fullscreenElement){
+  if(!keepFullscreen && document.fullscreenElement){
     document.exitFullscreen().catch(()=>{});
   }
 }
@@ -1414,7 +1531,7 @@ function buildPresentSeq(){
 }
 function advancePresent(){
   presentIdx++;
-  if(presentIdx>=presentSeq.length){ exitPresentation();toast('Fim da apresentação.');return; }
+  if(presentIdx>=presentSeq.length){ exitPresentation(true);toast('Fim da apresentação.');return; }
   focusPresentNode(presentIdx);
 }
 function retreatPresent(){
@@ -1477,26 +1594,97 @@ document.addEventListener('click',e=>{
 });
 function closeFab(){ fabOpen=false;fabWrap.classList.remove('open');fabMain.classList.remove('open'); }
 
-/* ── THEME / PALETTE ── */
+/* ── THEME (legacy, kept for backward compat with old .flow files) ── */
 function setDark(v){
   darkMode=v;
   document.body.classList.toggle('dark',darkMode);
   save();
 }
-function toggleTheme(){ setDark(!darkMode);render();toast(darkMode?'Tema Escuro':'Tema Claro'); }
-document.getElementById('btn-theme2').onclick=toggleTheme;
-document.getElementById('btn-colors').onclick=()=>{
-  closeFab();
-  paletteIdx=(paletteIdx+1)%palettes.length;
-  palette=palettes[paletteIdx];
-  document.body.dataset.palette=palette==='default'?'':palette;
-  document.getElementById('colors-label').innerHTML='Paleta: '+paletteNames[palette]+' <kbd>C</kbd>';
-  render();save();toast('Paleta: '+paletteNames[palette]);
+
+/* ── CUSTOM COLORS ── */
+const CC_KEYS=['bg','text','sub','panel','node','nodeB','line','accent','accent2'];
+const CC_STORAGE_KEY='flow_v5_customcolors';
+const CC_DEFAULT={ // "Aurora" — matches the original built-in light theme
+  bg:'#eef0fa',text:'#12131c',sub:'#5b6480',panel:'#ffffff',
+  node:'#ffffff',nodeB:'#141932',line:'#aab7da',accent:'#3d5af1',accent2:'#7c3aed'
 };
+const CC_PRESET_BRIGHT={ // Sala muito clara — alto contraste para ambientes muito iluminados
+  bg:'#ffffff',text:'#0a0b10',sub:'#3c4256',panel:'#ffffff',
+  node:'#ffffff',nodeB:'#11131c',line:'#4a5170',accent:'#0b47ff',accent2:'#d61f56'
+};
+const CC_PRESET_DARK={ // Sala muito escura — suave, sem excesso de brilho
+  bg:'#05060a',text:'#eef0fb',sub:'#8891b3',panel:'#0d0f18',
+  node:'#0e111c',nodeB:'#242a44',line:'#1b2036',accent:'#6d8bff',accent2:'#c79bff'
+};
+let customColors=null; // null = using the original built-in theme
+
+function isDarkColor(hex){
+  const h=(hex||'#ffffff').replace('#','');
+  const r=parseInt(h.substring(0,2),16),g=parseInt(h.substring(2,4),16),b=parseInt(h.substring(4,6),16);
+  return ((0.299*r+0.587*g+0.114*b)/255)<0.5;
+}
+function applyCustomColors(c){
+  const b=document.body.style;
+  b.setProperty('--bg',c.bg);
+  b.setProperty('--canvas',c.bg);
+  b.setProperty('--text',c.text);
+  b.setProperty('--sub',c.sub);
+  b.setProperty('--sub-dim',hexToRgba(c.sub,.65));
+  b.setProperty('--panel',hexToRgba(c.panel,.88));
+  b.setProperty('--panel-b',hexToRgba(c.text,.10));
+  b.setProperty('--node',c.node);
+  b.setProperty('--node-b',hexToRgba(c.nodeB,.55));
+  b.setProperty('--line',c.line);
+  b.setProperty('--c0',c.accent);
+  b.setProperty('--c0b',hexToRgba(c.accent,.14));
+  b.setProperty('--c1',c.accent2);
+  b.setProperty('--c1b',hexToRgba(c.accent2,.14));
+  b.setProperty('--bg-glow1',hexToRgba(c.accent,.14));
+  b.setProperty('--bg-glow2',hexToRgba(c.accent2,.10));
+  const dark=isDarkColor(c.bg);
+  darkMode=dark;
+  document.body.classList.toggle('dark',dark);
+  const mt=document.querySelector('meta[name="theme-color"]');
+  if(mt)mt.setAttribute('content',c.bg);
+  render();
+}
+function clearCustomColors(){
+  const b=document.body.style;
+  ['--bg','--canvas','--text','--sub','--sub-dim','--panel','--panel-b','--node','--node-b',
+   '--line','--c0','--c0b','--c1','--c1b','--bg-glow1','--bg-glow2'].forEach(k=>b.removeProperty(k));
+  document.body.classList.remove('dark');
+  darkMode=false;
+  const mt=document.querySelector('meta[name="theme-color"]');
+  if(mt)mt.setAttribute('content','#eef0fa');
+  render();
+}
+function ccFillInputs(c){ CC_KEYS.forEach(k=>{ document.getElementById('cc-'+k).value=c[k]; }); }
+function ccCurrentValues(){ const c={}; CC_KEYS.forEach(k=>{ c[k]=document.getElementById('cc-'+k).value; }); return c; }
+function ccPersist(c){ customColors=c; localStorage.setItem(CC_STORAGE_KEY,JSON.stringify(c)); }
+function loadCustomColorsOnInit(){
+  try{
+    const raw=localStorage.getItem(CC_STORAGE_KEY);
+    if(raw){ customColors=JSON.parse(raw); applyCustomColors(customColors); }
+  }catch(e){}
+}
+CC_KEYS.forEach(k=>{
+  const input=document.getElementById('cc-'+k);
+  input.addEventListener('input',()=>applyCustomColors(ccCurrentValues()));
+  input.addEventListener('change',()=>ccPersist(ccCurrentValues()));
+});
+document.getElementById('btn-custom-colors').onclick=()=>{
+  closeFab();
+  ccFillInputs(customColors||CC_DEFAULT);
+  openModal('moverlay-customcolors');
+};
+document.getElementById('cc-close').onclick=()=>closeModal('moverlay-customcolors');
+document.getElementById('cc-preset-bright').onclick=()=>{ ccFillInputs(CC_PRESET_BRIGHT);applyCustomColors(CC_PRESET_BRIGHT);ccPersist(CC_PRESET_BRIGHT);toast('Combinação: Sala muito clara'); };
+document.getElementById('cc-preset-dark').onclick=()=>{ ccFillInputs(CC_PRESET_DARK);applyCustomColors(CC_PRESET_DARK);ccPersist(CC_PRESET_DARK);toast('Combinação: Sala muito escura'); };
+document.getElementById('cc-preset-reset').onclick=()=>{ ccFillInputs(CC_DEFAULT);customColors=null;localStorage.removeItem(CC_STORAGE_KEY);clearCustomColors();toast('Cores restauradas ao padrão'); };
 
 /* ── BUTTON BINDINGS ── */
 document.getElementById('btn-new').onclick=()=>{ closeFab();openRootModal(); };
-document.getElementById('btn-arrange').onclick=()=>{ closeFab();pushHistory();layoutTree();render();fitAll();toast('Nós organizados!'); };
+document.getElementById('btn-arrange').onclick=()=>{ closeFab();reorganize(); };
 document.getElementById('btn-dir').onclick=()=>{
   closeFab();
   layoutDir=layoutDir==='lr'?'td':'lr';
@@ -1504,11 +1692,9 @@ document.getElementById('btn-dir').onclick=()=>{
   document.getElementById('dir-label').innerHTML=lbl+' <kbd>D</kbd>';
   const ico=document.getElementById('dir-icon');
   ico.innerHTML=layoutDir==='lr'?'<path d="M5 12h14M12 5l7 7-7 7"/>':'<path d="M12 5v14M5 12l7 7 7-7"/>';
-  pushHistory();layoutTree();render();fitAll();save();toast('Disposição: '+lbl);
+  reorganize('Disposição: '+lbl);
 };
 document.getElementById('btn-present').onclick=()=>{ closeFab();togglePresentation(); };
-document.getElementById('btn-undo').onclick=undo;
-document.getElementById('btn-redo').onclick=redo;
 
 /* ── FILE LOAD (.flow) ── */
 document.getElementById('flow-file-input').onchange=e=>{
@@ -1530,10 +1716,8 @@ function applyState(s){
   if(s.palette&&palettes.includes(s.palette)){
     palette=s.palette;paletteIdx=palettes.indexOf(palette);
     document.body.dataset.palette=palette==='default'?'':palette;
-    document.getElementById('colors-label').innerHTML='Paleta: '+paletteNames[palette]+' <kbd>C</kbd>';
   } else {
     palette='default';paletteIdx=0;delete document.body.dataset.palette;
-    document.getElementById('colors-label').innerHTML='Paleta: Aurora <kbd>C</kbd>';
   }
   layoutDir=(s.layoutDir&&s.layoutDir!=='lr')?'td':'lr';
   document.getElementById('dir-label').innerHTML=(layoutDir==='lr'?'Esquerda → Direita':'Cima ↓ Baixo')+' <kbd>D</kbd>';
@@ -1567,7 +1751,7 @@ function toast(msg,dur=2200){
 }
 
 /* ── GENERIC MODALS (open/close, escape) ── */
-const ALL_MODAL_IDS=['moverlay-node','moverlay-ai','moverlay-export','moverlay-save','moverlay-projects','moverlay-help','moverlay-about','moverlay-confirm','moverlay-prompt'];
+const ALL_MODAL_IDS=['moverlay-node','moverlay-ai','moverlay-export','moverlay-save','moverlay-projects','moverlay-about','moverlay-customcolors','moverlay-confirm','moverlay-prompt'];
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 function closeAllModals(){ ALL_MODAL_IDS.forEach(closeModal); closeCardFocus(); }
@@ -1609,7 +1793,6 @@ function toggleSearch(){
   else searchInput.value='';
   runSearch();
 }
-document.getElementById('btn-search').onclick=toggleSearch;
 function runSearch(){
   const q=searchInput.value.trim().toLowerCase();
   const box=document.getElementById('search-results');
@@ -1722,86 +1905,6 @@ document.getElementById('ex-flow').onclick=()=>{
 document.getElementById('ex-load').onclick=()=>{ closeModal('moverlay-export');document.getElementById('flow-file-input').click(); };
 document.getElementById('msave-cancel').onclick=()=>closeModal('moverlay-save');
 
-function loadScriptOnce(src){
-  return new Promise((resolve,reject)=>{
-    if(document.querySelector(`script[src="${src}"]`)){resolve();return;}
-    const s=document.createElement('script');
-    s.src=src;s.onload=resolve;s.onerror=()=>reject(new Error('Falha ao carregar '+src));
-    document.head.appendChild(s);
-  });
-}
-
-document.getElementById('ex-png').onclick=async()=>{
-  closeModal('moverlay-export');
-  toast('Preparando imagem…',1600);
-  try{
-    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-    fitAll(false);
-    await new Promise(r=>setTimeout(r,200));
-    const bg=getComputedStyle(document.body).getPropertyValue('--canvas').trim();
-    const canvas=await html2canvas(workspace,{backgroundColor:bg,useCORS:true,scale:2});
-    const link=document.createElement('a');
-    link.download=(currentProjectId?projects[currentProjectId].name:'flow')+'.png';
-    link.href=canvas.toDataURL('image/png');
-    link.click();
-    toast('Imagem exportada!');
-  }catch(err){
-    toast('Não foi possível exportar a imagem. Verifique sua conexão.');
-  }
-};
-
-document.getElementById('ex-pdf').onclick=async()=>{
-  closeModal('moverlay-export');
-  if(!nodes.length){toast('Não há nós para exportar.');return;}
-  toast('Gerando apresentação em PDF…',1800);
-  try{
-    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    const { jsPDF }=window.jspdf;
-    const doc=new jsPDF({orientation:'landscape',unit:'pt',format:[960,540]});
-    const seq=[];
-    function dfsAll(id){ seq.push(id); ch(id).forEach(c=>dfsAll(c.id)); }
-    nodes.filter(n=>n.parent===null).forEach(r=>dfsAll(r.id));
-    const projName=currentProjectId?projects[currentProjectId].name:'Flow';
-    const paletteHex=['#3d5af1','#7c3aed','#0891b2','#059669','#d97706','#e11d48'];
-
-    /* title slide */
-    doc.setFillColor(13,17,23);doc.rect(0,0,960,540,'F');
-    doc.setTextColor(255,255,255);
-    doc.setFont('helvetica','bold');doc.setFontSize(40);
-    doc.text(projName,60,260);
-    doc.setFont('helvetica','normal');doc.setFontSize(14);
-    doc.setTextColor(180,185,210);
-    doc.text('Apresentação gerada com Flow',60,290);
-
-    seq.forEach((id,i)=>{
-      const n=nodes.find(x=>x.id===id);
-      const g=genOf(id);
-      const color=n.color||paletteHex[g];
-      const rgb=[parseInt(color.slice(1,3),16),parseInt(color.slice(3,5),16),parseInt(color.slice(5,7),16)];
-      doc.addPage([960,540],'landscape');
-      doc.setFillColor(255,255,255);doc.rect(0,0,960,540,'F');
-      doc.setFillColor(rgb[0],rgb[1],rgb[2]);doc.rect(0,0,14,540,'F');
-      doc.setTextColor(20,22,30);
-      doc.setFont('helvetica','bold');doc.setFontSize(30);
-      const titleTxt=(n.icon?n.icon+'  ':'')+n.title;
-      const titleLines=doc.splitTextToSize(titleTxt,820);
-      doc.text(titleLines,70,130);
-      if(n.body){
-        doc.setFont('helvetica','normal');doc.setFontSize(17);
-        doc.setTextColor(80,88,110);
-        const bodyLines=doc.splitTextToSize(n.body,800);
-        doc.text(bodyLines,70,130+titleLines.length*38+30);
-      }
-      doc.setFontSize(10);doc.setTextColor(160,166,190);
-      doc.text(projName+'   ·   '+(i+1)+' / '+seq.length,70,510);
-    });
-    doc.save(projName+'.pdf');
-    toast('PDF gerado com sucesso!');
-  }catch(err){
-    toast('Não foi possível gerar o PDF. Verifique sua conexão.');
-  }
-};
-
 /* ── PROJECTS (multi-document) ── */
 function loadProjectsFromStorage(){
   try{
@@ -1855,7 +1958,7 @@ function loadCurrentProject(){
   palette=palettes.includes(p.palette)?p.palette:'default';
   paletteIdx=palettes.indexOf(palette);
   document.body.dataset.palette=palette==='default'?'':palette;
-  document.getElementById('colors-label').innerHTML='Paleta: '+paletteNames[palette]+' <kbd>C</kbd>';
+  if(customColors)applyCustomColors(customColors);
   layoutDir=p.layoutDir==='td'?'td':'lr';
   document.getElementById('dir-label').innerHTML=(layoutDir==='lr'?'Esquerda → Direita':'Cima ↓ Baixo')+' <kbd>D</kbd>';
   document.getElementById('dir-icon').innerHTML=layoutDir==='lr'?'<path d="M5 12h14M12 5l7 7-7 7"/>':'<path d="M12 5v14M5 12l7 7 7-7"/>';
@@ -1952,24 +2055,8 @@ document.getElementById('proj-close').onclick=()=>closeModal('moverlay-projects'
 document.getElementById('proj-new').onclick=newProject;
 tbProject.onclick=()=>{ renderProjectList();openModal('moverlay-projects'); };
 
-/* ── SHORTCUTS HELP ── */
-const SHORTCUTS=[
-  ['N','Novo nó raiz'],['O','Organizar nós'],['D','Alternar disposição'],['C','Trocar paleta de cores'],
-  ['T','Alternar tema claro/escuro'],['P','Modo apresentação'],['Ctrl+F','Buscar nós'],
-  ['Ctrl+Z','Desfazer'],['Ctrl+Shift+Z','Refazer'],['Delete','Excluir nó selecionado'],
-  ['Shift+Delete','Limpar todo o mapa'],['F11','Tela cheia'],['Duplo clique/toque','Focar card'],
-  ['Espaço / →','Avançar apresentação'],['←','Voltar apresentação'],
-  ['+ / -','Zoom na apresentação'],['0','Redefinir zoom da apresentação'],['Esc','Sair / fechar']
-];
-function buildShortcutsList(){
-  const box=document.getElementById('kb-list');
-  box.innerHTML=SHORTCUTS.map(([k,d])=>`<div class="kbrow"><span>${esc(d)}</span><kbd>${esc(k)}</kbd></div>`).join('');
-}
-document.getElementById('btn-help').onclick=()=>{ buildShortcutsList();openModal('moverlay-help'); };
-document.getElementById('help-close').onclick=()=>closeModal('moverlay-help');
-
 /* ── ABOUT ── */
-document.getElementById('btn-about').onclick=()=>{ closeFab();openModal('moverlay-about'); };
+document.getElementById('btn-about').onclick=()=>{ openModal('moverlay-about'); };
 document.getElementById('about-close').onclick=()=>closeModal('moverlay-about');
 
 /* ── KEYBOARD ── */
@@ -2017,11 +2104,9 @@ document.addEventListener('keydown',e=>{
     }
     const k=e.key.toLowerCase();
     if(k==='n'){ openRootModal();return; }
-    if(k==='o'){ pushHistory();layoutTree();render();fitAll();save();toast('Nós organizados!');return; }
+    if(k==='o'){ reorganize();return; }
     if(k==='p'){ togglePresentation();return; }
-    if(k==='?'){ buildShortcutsList();openModal('moverlay-help');return; }
-    if(k==='t'){ toggleTheme();return; }
-    if(k==='c'){ document.getElementById('btn-colors').click();return; }
+    if(k==='c'){ document.getElementById('btn-custom-colors').click();return; }
     if(k==='d'){ document.getElementById('btn-dir').click();return; }
     if(k==='e'){ openModal('moverlay-export');return; }
   }
@@ -2037,6 +2122,7 @@ window.addEventListener('resize',()=>render());
 (function init(){
   loadProjectsFromStorage();
   loadCurrentProject();
+  loadCustomColorsOnInit();
   if(!nodes.length){
     const root=makeNode('Ideia Principal','Clique duplo para focar',80,120,null,'💡','');
     nodes.push(root);
