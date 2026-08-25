@@ -114,7 +114,7 @@ button,input,textarea{font-family:inherit;}
   background-image:
     radial-gradient(ellipse 900px 600px at 15% 10%,var(--bg-glow1),transparent 60%),
     radial-gradient(ellipse 900px 700px at 90% 85%,var(--bg-glow2),transparent 60%),
-    radial-gradient(circle at 1px 1px,var(--line) 1px,transparent 0);
+    radial-gradient(circle at 1px 1px,color-mix(in srgb,var(--line) 55%,transparent) 1px,transparent 0);
   background-size:auto,auto,34px 34px;
   cursor:default;transition:background-color .4s;touch-action:none;
 }
@@ -124,6 +124,50 @@ body.dark #workspace{
     radial-gradient(ellipse 900px 700px at 90% 85%,var(--bg-glow2),transparent 60%),
     radial-gradient(circle at 1px 1px,rgba(255,255,255,.035) 1px,transparent 0);
   background-size:auto,auto,34px 34px;
+}
+/* Padrões de fundo alternativos — grade e blueprint (linhas de engenharia) */
+body[data-bgpattern="grid"] #workspace{
+  background-image:
+    radial-gradient(ellipse 900px 600px at 15% 10%,var(--bg-glow1),transparent 60%),
+    radial-gradient(ellipse 900px 700px at 90% 85%,var(--bg-glow2),transparent 60%),
+    linear-gradient(to right,color-mix(in srgb,var(--line) 45%,transparent) 1px,transparent 1px),
+    linear-gradient(to bottom,color-mix(in srgb,var(--line) 45%,transparent) 1px,transparent 1px);
+  background-size:auto,auto,34px 34px,34px 34px;
+}
+body.dark[data-bgpattern="grid"] #workspace{
+  background-image:
+    radial-gradient(ellipse 900px 600px at 15% 10%,var(--bg-glow1),transparent 60%),
+    radial-gradient(ellipse 900px 700px at 90% 85%,var(--bg-glow2),transparent 60%),
+    linear-gradient(to right,rgba(255,255,255,.05) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:auto,auto,34px 34px,34px 34px;
+}
+body[data-bgpattern="blueprint"] #workspace{
+  background-image:
+    radial-gradient(ellipse 900px 600px at 15% 10%,var(--bg-glow1),transparent 60%),
+    radial-gradient(ellipse 900px 700px at 90% 85%,var(--bg-glow2),transparent 60%),
+    linear-gradient(to right,color-mix(in srgb,var(--line) 65%,transparent) 1.5px,transparent 1.5px),
+    linear-gradient(to bottom,color-mix(in srgb,var(--line) 65%,transparent) 1.5px,transparent 1.5px),
+    linear-gradient(to right,color-mix(in srgb,var(--line) 32%,transparent) 1px,transparent 1px),
+    linear-gradient(to bottom,color-mix(in srgb,var(--line) 32%,transparent) 1px,transparent 1px);
+  background-size:auto,auto,170px 170px,170px 170px,34px 34px,34px 34px;
+}
+body.dark[data-bgpattern="blueprint"] #workspace{
+  background-image:
+    radial-gradient(ellipse 900px 600px at 15% 10%,var(--bg-glow1),transparent 60%),
+    radial-gradient(ellipse 900px 700px at 90% 85%,var(--bg-glow2),transparent 60%),
+    linear-gradient(to right,rgba(255,255,255,.08) 1.5px,transparent 1.5px),
+    linear-gradient(to bottom,rgba(255,255,255,.08) 1.5px,transparent 1.5px),
+    linear-gradient(to right,rgba(255,255,255,.04) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:auto,auto,170px 170px,170px 170px,34px 34px,34px 34px;
+}
+body[data-bgpattern="none"] #workspace,
+body.dark[data-bgpattern="none"] #workspace{
+  background-image:
+    radial-gradient(ellipse 900px 600px at 15% 10%,var(--bg-glow1),transparent 60%),
+    radial-gradient(ellipse 900px 700px at 90% 85%,var(--bg-glow2),transparent 60%);
+  background-size:auto,auto;
 }
 #viewport{position:absolute;inset:0;transform-origin:0 0;will-change:transform;}
 #connections{position:absolute;inset:0;overflow:visible;pointer-events:none;}
@@ -305,7 +349,16 @@ body.presenting.show-controls #fab-wrap *{
 .na-del{background:var(--danger);}
 
 /* ═════ CONNECTIONS ═════ */
-.conn-path{fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.85;transition:stroke .4s,opacity .4s;}
+.conn-path{
+  fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.85;
+  transition:stroke .4s,opacity .4s;
+  stroke-dasharray:1 9;
+  animation:flowDots 1.1s linear infinite;
+}
+@keyframes flowDots{ to{ stroke-dashoffset:-20; } }
+@media (prefers-reduced-motion: reduce){
+  .conn-path{ animation:none; }
+}
 .cg0{stroke:var(--c0);stroke-width:3;}
 .cg1{stroke:var(--c1);stroke-width:2.5;}
 .cg2{stroke:var(--c2);stroke-width:2;}
@@ -508,6 +561,27 @@ body.presenting.show-controls #fab-wrap *{
 .ccitem input[type=color]::-webkit-color-swatch{border:none;border-radius:50%;}
 .ccitem input[type=color]::-moz-color-swatch{border:none;border-radius:50%;}
 @media(max-width:600px){.ccpresets{grid-template-columns:1fr;}}
+
+/* ═════ BACKGROUND PATTERN PICKER ═════ */
+.bgp-row{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:22px;}
+.bgp-btn{
+  display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;
+  background:var(--bg);border:1.5px solid var(--node-b);border-radius:14px;
+  padding:10px 6px 12px;cursor:pointer;color:var(--text);
+  transition:border-color .15s,transform .15s,background .15s;
+}
+.bgp-btn:hover{border-color:var(--c0);transform:translateY(-2px);}
+.bgp-btn.active{border-color:var(--c0);box-shadow:0 0 0 2px color-mix(in srgb,var(--c0) 35%,transparent);}
+.bgp-btn small{font-size:10.5px;font-weight:600;color:var(--sub);}
+.bgp-prev{
+  width:100%;height:44px;border-radius:9px;overflow:hidden;
+  border:1px solid var(--panel-b);background-color:var(--canvas);
+}
+.bgp-prev-dots{background-image:radial-gradient(circle at 1px 1px,var(--line) 1px,transparent 0);background-size:9px 9px;}
+.bgp-prev-grid{background-image:linear-gradient(to right,var(--line) 1px,transparent 1px),linear-gradient(to bottom,var(--line) 1px,transparent 1px);background-size:9px 9px,9px 9px;}
+.bgp-prev-blueprint{background-image:linear-gradient(to right,var(--line) 1.5px,transparent 1.5px),linear-gradient(to bottom,var(--line) 1.5px,transparent 1.5px),linear-gradient(to right,color-mix(in srgb,var(--line) 45%,transparent) 1px,transparent 1px),linear-gradient(to bottom,color-mix(in srgb,var(--line) 45%,transparent) 1px,transparent 1px);background-size:26px 26px,26px 26px,8.6px 8.6px,8.6px 8.6px;}
+.bgp-prev-none{background-image:none;}
+@media(max-width:600px){.bgp-row{grid-template-columns:repeat(2,1fr);}}
 
 /* ═════ MODE BADGE ═════ */
 #modeBadge{
@@ -759,8 +833,11 @@ body.presenting.show-controls #fab-wrap *{
     <div class="msub">Seus mapas ficam salvos neste navegador automaticamente.</div>
     <div class="plist" id="project-list"></div>
     <div class="macts" style="justify-content:space-between;">
-      <button class="mbtn s" id="proj-new">+ Novo projeto</button>
-      <button class="mbtn s" id="proj-close">Fechar</button>
+      <button class="mbtn s" id="proj-reset-default" title="Substitui o conteúdo deste projeto pelo mapa padrão">↺ Limpar e usar padrão</button>
+      <div style="display:flex;gap:10px;">
+        <button class="mbtn s" id="proj-new">+ Novo projeto</button>
+        <button class="mbtn s" id="proj-close">Fechar</button>
+      </div>
     </div>
   </div>
 </div>
@@ -808,6 +885,14 @@ body.presenting.show-controls #fab-wrap *{
       </button>
     </div>
 
+    <div class="msub" style="margin-top:-8px;">Padrão do quadro de fundo.</div>
+    <div class="bgp-row" id="bgp-row">
+      <button class="bgp-btn" data-p="dots"><span class="bgp-prev bgp-prev-dots"></span><small>Pontos</small></button>
+      <button class="bgp-btn" data-p="grid"><span class="bgp-prev bgp-prev-grid"></span><small>Grade</small></button>
+      <button class="bgp-btn" data-p="blueprint"><span class="bgp-prev bgp-prev-blueprint"></span><small>Blueprint</small></button>
+      <button class="bgp-btn" data-p="none"><span class="bgp-prev bgp-prev-none"></span><small>Nenhum</small></button>
+    </div>
+
     <div class="ccgrid" id="cc-grid">
       <label class="ccitem"><input type="color" id="cc-bg" data-key="bg"><span>Fundo</span></label>
       <label class="ccitem"><input type="color" id="cc-text" data-key="text"><span>Fonte principal</span></label>
@@ -815,7 +900,7 @@ body.presenting.show-controls #fab-wrap *{
       <label class="ccitem"><input type="color" id="cc-panel" data-key="panel"><span>Painéis / Menus</span></label>
       <label class="ccitem"><input type="color" id="cc-node" data-key="node"><span>Fundo dos cards</span></label>
       <label class="ccitem"><input type="color" id="cc-nodeB" data-key="nodeB"><span>Borda dos cards</span></label>
-      <label class="ccitem"><input type="color" id="cc-line" data-key="line"><span>Linhas de conexão</span></label>
+      <label class="ccitem"><input type="color" id="cc-line" data-key="line"><span>Grade de fundo</span></label>
       <label class="ccitem"><input type="color" id="cc-accent" data-key="accent"><span>Cor de destaque</span></label>
       <label class="ccitem"><input type="color" id="cc-accent2" data-key="accent2"><span>Destaque secundário</span></label>
     </div>
@@ -1038,9 +1123,14 @@ async function reorganize(msg){
 /* ── RENDER ── */
 function render(){
   viewport.querySelectorAll('.node').forEach(el=>el.remove());
-  drawConnections();
   drawNodes();
+  drawConnections();
   updateFonts();
+}
+function nodeRect(id){
+  const el=viewport.querySelector(`.node[data-id="${id}"]`);
+  if(el)return{w:el.offsetWidth,h:el.offsetHeight};
+  return{w:NW,h:NH};
 }
 function applyTransform(){ viewport.style.transform=`translate(${panX}px,${panY}px) scale(${scale})`; }
 
@@ -1053,15 +1143,16 @@ function drawConnections(){
     if(!node.parent||!isVisible(node.id))return;
     const par=nodes.find(n=>n.id===node.parent);if(!par)return;
     const g=genOf(par.id);
+    const pr=nodeRect(par.id),nr=nodeRect(node.id);
     let d;
     if(layoutDir==='lr'){
-      const sx=par.x+NW+OX,sy=par.y+NH/2+OY;
-      const ex=node.x+OX,ey=node.y+NH/2+OY;
+      const sx=par.x+pr.w+OX,sy=par.y+pr.h/2+OY;
+      const ex=node.x+OX,ey=node.y+nr.h/2+OY;
       const cx=(sx+ex)/2;
       d=`M${sx},${sy} C${cx},${sy} ${cx},${ey} ${ex},${ey}`;
     } else {
-      const sx=par.x+NW/2+OX,sy=par.y+NH+OY;
-      const ex=node.x+NW/2+OX,ey=node.y+OY;
+      const sx=par.x+pr.w/2+OX,sy=par.y+pr.h+OY;
+      const ex=node.x+nr.w/2+OX,ey=node.y+OY;
       const cy=(sy+ey)/2;
       d=`M${sx},${sy} C${sx},${cy} ${ex},${cy} ${ex},${ey}`;
     }
@@ -1083,7 +1174,7 @@ function drawNodes(){
     el.style.left=node.x+'px';el.style.top=node.y+'px';
     if(node.color){
       el.style.borderLeftColor=node.color;
-      el.style.background=hexToRgba(node.color,darkMode?.13:.09);
+      el.style.background=`color-mix(in srgb, ${node.color} ${darkMode?15:10}%, var(--node))`;
       el.style.setProperty('--node-glow',node.color);
     }
     if(node.id===selectedId)el.classList.add('selected');
@@ -1601,6 +1692,29 @@ function setDark(v){
   save();
 }
 
+/* ── BACKGROUND PATTERN ── */
+const BGP_KEY='flow_v5_bgpattern';
+const BGP_OPTIONS=['dots','grid','blueprint','none'];
+let bgPattern='dots';
+function applyBgPattern(p){
+  bgPattern=BGP_OPTIONS.includes(p)?p:'dots';
+  document.body.dataset.bgpattern=bgPattern;
+  document.querySelectorAll('.bgp-btn').forEach(b=>b.classList.toggle('active',b.dataset.p===bgPattern));
+}
+function loadBgPatternOnInit(){
+  let p='dots';
+  try{ p=localStorage.getItem(BGP_KEY)||'dots'; }catch(e){}
+  applyBgPattern(p);
+}
+document.querySelectorAll('.bgp-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const p=btn.dataset.p;
+    applyBgPattern(p);
+    try{ localStorage.setItem(BGP_KEY,p); }catch(e){}
+    toast('Padrão de fundo: '+btn.querySelector('small').textContent);
+  });
+});
+
 /* ── CUSTOM COLORS ── */
 const CC_KEYS=['bg','text','sub','panel','node','nodeB','line','accent','accent2'];
 const CC_STORAGE_KEY='flow_v5_customcolors';
@@ -1636,9 +1750,9 @@ function applyCustomColors(c){
   b.setProperty('--node-b',hexToRgba(c.nodeB,.55));
   b.setProperty('--line',c.line);
   b.setProperty('--c0',c.accent);
-  b.setProperty('--c0b',hexToRgba(c.accent,.14));
+  b.setProperty('--c0b',`color-mix(in srgb, ${c.accent} 14%, ${c.node})`);
   b.setProperty('--c1',c.accent2);
-  b.setProperty('--c1b',hexToRgba(c.accent2,.14));
+  b.setProperty('--c1b',`color-mix(in srgb, ${c.accent2} 14%, ${c.node})`);
   b.setProperty('--bg-glow1',hexToRgba(c.accent,.14));
   b.setProperty('--bg-glow2',hexToRgba(c.accent2,.10));
   const dark=isDarkColor(c.bg);
@@ -2050,9 +2164,24 @@ async function newProject(){
   closeModal('moverlay-projects');
   toast('Projeto criado: '+v);
 }
+async function resetToDefault(){
+  const ok=await showConfirm('Limpar e usar padrão','Isso substitui todo o conteúdo do projeto atual pelo mapa padrão. Essa ação não pode ser desfeita. Deseja continuar?');
+  if(!ok)return;
+  pushHistory();
+  const root=makeNode('Ideia Principal','Clique duplo para focar',80,120,null,'💡','');
+  nodes=[root];
+  [['Conceito A','Primeiro ramo','🅰️'],['Conceito B','Segundo ramo','🅱️'],['Conceito C','Terceiro ramo','🔤']]
+  .forEach((d,i)=>nodes.push(makeNode(d[0],d[1],400,60+i*200,root.id,d[2],'')));
+  layoutTree();render();
+  setTimeout(()=>fitAll(false),80);
+  save();
+  closeModal('moverlay-projects');
+  toast('Projeto redefinido para o padrão.');
+}
 document.getElementById('btn-projects').onclick=()=>{ closeFab();renderProjectList();openModal('moverlay-projects'); };
 document.getElementById('proj-close').onclick=()=>closeModal('moverlay-projects');
 document.getElementById('proj-new').onclick=newProject;
+document.getElementById('proj-reset-default').onclick=resetToDefault;
 tbProject.onclick=()=>{ renderProjectList();openModal('moverlay-projects'); };
 
 /* ── ABOUT ── */
@@ -2123,6 +2252,7 @@ window.addEventListener('resize',()=>render());
   loadProjectsFromStorage();
   loadCurrentProject();
   loadCustomColorsOnInit();
+  loadBgPatternOnInit();
   if(!nodes.length){
     const root=makeNode('Ideia Principal','Clique duplo para focar',80,120,null,'💡','');
     nodes.push(root);
