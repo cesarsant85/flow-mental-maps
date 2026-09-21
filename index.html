@@ -597,6 +597,34 @@ body.presenting.show-controls #fab-wrap *{
 #modeBadge .dot{width:7px;height:7px;border-radius:50%;background:var(--c0);animation:blink 2s infinite;transition:background .4s;}
 @keyframes blink{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
 
+/* ═════ CONTROLE DE ESPAÇAMENTO (modo edição) ═════ */
+#spacing-ctl{
+  position:fixed;right:20px;bottom:calc(68px + env(safe-area-inset-bottom));z-index:9999;
+  display:flex;align-items:center;gap:2px;
+  background:var(--panel);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--panel-b);border-radius:50px;
+  padding:4px 5px 4px 13px;box-shadow:var(--shadow-sm);color:var(--sub);
+  font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+}
+#spacing-ctl .sp-lbl{display:flex;align-items:center;gap:7px;margin-right:4px;}
+.sp-btn{
+  width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;flex-shrink:0;
+  background:transparent;color:var(--sub);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;line-height:1;
+  transition:background .16s,color .16s,transform .16s;
+}
+.sp-btn:hover:not(:disabled){background:var(--c0);color:#fff;transform:scale(1.08);}
+.sp-btn:active:not(:disabled){transform:scale(.94);}
+.sp-btn:disabled{opacity:.3;cursor:default;}
+#sp-val{min-width:36px;text-align:center;color:var(--text);letter-spacing:0;font-variant-numeric:tabular-nums;}
+#sp-reset{font-size:13px;margin-left:2px;}
+body.presenting #spacing-ctl{display:none!important;}
+@media(max-width:600px){
+  #spacing-ctl{right:14px;bottom:calc(62px + env(safe-area-inset-bottom));padding-left:10px;}
+  #spacing-ctl .sp-txt{display:none;}
+}
+
 /* ═════ TOAST ═════ */
 #toast-wrap{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:9999999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;}
 .toast{
@@ -729,6 +757,18 @@ body.presenting.show-controls #fab-wrap *{
   <div id="viewport">
     <svg id="connections"></svg>
   </div>
+</div>
+
+<!-- Controle de espaçamento entre nós (modo edição) -->
+<div id="spacing-ctl" role="group" aria-label="Espaçamento entre nós">
+  <span class="sp-lbl" title="Afasta ou aproxima os nós igualmente na vertical e na horizontal">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M12 2v20M5 9l-3 3 3 3M19 9l3 3-3 3M9 5l3-3 3 3M9 19l3 3 3-3"/></svg>
+    <span class="sp-txt">Espaço</span>
+  </span>
+  <button class="sp-btn" id="sp-minus" title="Aproximar nós (,)" aria-label="Aproximar nós">−</button>
+  <span id="sp-val" title="Espaçamento extra aplicado (px)">0</span>
+  <button class="sp-btn" id="sp-plus" title="Afastar nós (.)" aria-label="Afastar nós">+</button>
+  <button class="sp-btn" id="sp-reset" title="Espaçamento padrão" aria-label="Restaurar espaçamento padrão">⟲</button>
 </div>
 
 <!-- Mode badge -->
@@ -951,6 +991,10 @@ body.presenting.show-controls #fab-wrap *{
 let nodes=[], scale=1, panX=0, panY=0;
 let darkMode=false, presentationMode=false;
 let layoutDir='lr';
+/* Espaçamento extra (px) somado IGUALMENTE aos intervalos horizontal e vertical.
+   Persistido por projeto e respeitado por layoutTree() / "Organizar". */
+let spacingExtra=0;
+const SPACING_STEP=20, SPACING_MIN=-40, SPACING_MAX=300;
 let palette='default';
 const palettes=['default','ocean','forest','sunset','mono'];
 const paletteNames={default:'Aurora',ocean:'Oceano',forest:'Floresta',sunset:'Pôr do Sol',mono:'Monocromático'};
@@ -1022,6 +1066,14 @@ function hexToRgba(hex,alpha){
 
 /* ── LAYOUT ── */
 const HGAP=320,VGAP=170,TGAP=230,TROW=310;
+function clampSpacing(v){ v=Number(v); if(!isFinite(v))v=0; return Math.max(SPACING_MIN,Math.min(SPACING_MAX,Math.round(v))); }
+/* Intervalos efetivos = base + espaçamento extra (o mesmo valor nos dois eixos) */
+function gapH(){ return HGAP+spacingExtra; }   /* LR: entre níveis (horizontal)  */
+function gapV(){ return VGAP+spacingExtra; }   /* LR: entre irmãos (vertical)    */
+function gapT(){ return TGAP+spacingExtra; }   /* TD: entre irmãos (horizontal)  */
+function gapR(){ return TROW+spacingExtra; }   /* TD: entre níveis (vertical)    */
+/* Intervalo efetivo por eixo da direção atual: {x, y} */
+function axisGaps(){ return layoutDir==='lr'?{x:gapH(),y:gapV()}:{x:gapT(),y:gapR()}; }
 function measureSub(id){
   const c=ch(id);
   if(!c.length)return 1;
@@ -1029,45 +1081,47 @@ function measureSub(id){
 }
 function layoutTree(){ layoutDir==='lr'?layoutLR():layoutTD(); }
 function layoutLR(){
+  const H=gapH(),V=gapV();
   const roots=nodes.filter(n=>n.parent===null);
   let sy=80;
   roots.forEach(r=>{
     r.x=80;r.y=sy;
-    placeLR(r.id,0,r.y);
-    sy+=measureSub(r.id)*VGAP+80;
+    placeLR(r.id,0,r.y,H,V);
+    sy+=measureSub(r.id)*V+80;
   });
 }
-function placeLR(id,depth,yc){
+function placeLR(id,depth,yc,H,V){
   const node=nodes.find(n=>n.id===id);if(!node)return;
-  if(depth>0){node.x=80+depth*HGAP;node.y=yc;}
+  if(depth>0){node.x=80+depth*H;node.y=yc;}
   const c=ch(id);if(!c.length||node.collapsed)return;
   const sizes=c.map(x=>measureSub(x.id));
   const total=sizes.reduce((a,b)=>a+b,0);
-  let curY=yc-((total-1)/2)*VGAP;
+  let curY=yc-((total-1)/2)*V;
   c.forEach((x,i)=>{
-    x.x=node.x+HGAP;x.y=curY+(sizes[i]/2-.5)*VGAP;
-    placeLR(x.id,depth+1,x.y);curY+=sizes[i]*VGAP;
+    x.x=node.x+H;x.y=curY+(sizes[i]/2-.5)*V;
+    placeLR(x.id,depth+1,x.y,H,V);curY+=sizes[i]*V;
   });
 }
 function layoutTD(){
+  const T=gapT(),R=gapR();
   const roots=nodes.filter(n=>n.parent===null);
   let sx=80;
   roots.forEach(r=>{
     r.x=sx;r.y=80;
-    placeTD(r.id,0,r.x);
-    sx+=measureSub(r.id)*TGAP+80;
+    placeTD(r.id,0,r.x,T,R);
+    sx+=measureSub(r.id)*T+80;
   });
 }
-function placeTD(id,depth,xc){
+function placeTD(id,depth,xc,T,R){
   const node=nodes.find(n=>n.id===id);if(!node)return;
-  if(depth>0){node.y=80+depth*TROW;node.x=xc;}
+  if(depth>0){node.y=80+depth*R;node.x=xc;}
   const c=ch(id);if(!c.length||node.collapsed)return;
   const sizes=c.map(x=>measureSub(x.id));
   const total=sizes.reduce((a,b)=>a+b,0);
-  let curX=xc-((total-1)/2)*TGAP;
+  let curX=xc-((total-1)/2)*T;
   c.forEach((x,i)=>{
-    x.y=node.y+TROW;x.x=curX+(sizes[i]/2-.5)*TGAP;
-    placeTD(x.id,depth+1,x.x);curX+=sizes[i]*TGAP;
+    x.y=node.y+R;x.x=curX+(sizes[i]/2-.5)*T;
+    placeTD(x.id,depth+1,x.x,T,R);curX+=sizes[i]*T;
   });
 }
 
@@ -1118,6 +1172,56 @@ async function reorganize(msg){
   viewport.style.pointerEvents='';
   isAnimatingLayout=false;
   toast(msg||'Nós organizados!');
+}
+
+/* ── ESPAÇAMENTO ENTRE NÓS (modo edição) ──
+   Afasta/aproxima os nós o MESMO tanto (px) nos dois eixos. Preserva a
+   disposição atual (inclusive ajustes manuais), expandindo a partir do
+   centro da tela. O valor fica salvo e é aplicado por "Organizar". */
+let spacingBusy=false, spacingQueued=null;
+function updateSpacingUI(){
+  const v=document.getElementById('sp-val');if(!v)return;
+  v.textContent=(spacingExtra>0?'+':spacingExtra<0?'−':'')+Math.abs(spacingExtra);
+  document.getElementById('sp-minus').disabled=spacingExtra<=SPACING_MIN;
+  document.getElementById('sp-plus').disabled=spacingExtra>=SPACING_MAX;
+  document.getElementById('sp-reset').disabled=spacingExtra===0;
+}
+async function setSpacing(target){
+  if(presentationMode)return;
+  target=clampSpacing(target);
+  if(spacingBusy){ spacingQueued=target;return; }   /* cliques rápidos acumulam */
+  if(isAnimatingLayout)return;
+  if(target===spacingExtra){
+    toast(target>=SPACING_MAX?'Espaçamento máximo':target<=SPACING_MIN?'Espaçamento mínimo':'Espaçamento padrão');
+    return;
+  }
+  spacingBusy=true;isAnimatingLayout=true;
+  viewport.style.pointerEvents='none';
+  pushHistory();
+  const before=axisGaps();
+  spacingExtra=target;
+  const after=axisGaps();
+  const fx=after.x/before.x, fy=after.y/before.y;
+  /* âncora: centro da tela em coordenadas do mapa */
+  const ax=(window.innerWidth/2-panX)/scale, ay=(window.innerHeight/2-panY)/scale;
+  const oldPos={},newPos={};
+  nodes.forEach(n=>{
+    oldPos[n.id]={x:n.x,y:n.y};
+    newPos[n.id]={x:Math.round((ax+(n.x-ax)*fx)*100)/100,y:Math.round((ay+(n.y-ay)*fy)*100)/100};
+  });
+  updateSpacingUI();
+  await animateLayoutTween(oldPos,newPos,240);
+  render();save();
+  viewport.style.pointerEvents='';
+  isAnimatingLayout=false;spacingBusy=false;
+  if(spacingQueued!==null){
+    const q=spacingQueued;spacingQueued=null;
+    if(q!==spacingExtra)setSpacing(q);
+  }
+}
+function adjustSpacing(delta){
+  const base=spacingQueued!==null?spacingQueued:spacingExtra;
+  setSpacing(base+delta);
 }
 
 /* ── RENDER ── */
@@ -1235,7 +1339,13 @@ function zoomToNode(id,smooth=true,targetScale=1.7){
 }
 
 /* ── HISTORY (undo/redo) ── */
-function snapshot(){ return JSON.stringify(nodes); }
+function snapshot(){ return JSON.stringify({nodes,spacing:spacingExtra}); }
+function restoreSnapshot(str){
+  const o=JSON.parse(str);
+  if(Array.isArray(o)){ nodes=o; }               /* formato antigo */
+  else{ nodes=o.nodes||[]; spacingExtra=clampSpacing(o.spacing); }
+  updateSpacingUI();
+}
 function pushHistory(){
   history.push(snapshot());
   if(history.length>HISTORY_MAX)history.shift();
@@ -1245,13 +1355,13 @@ function pushHistory(){
 function undo(){
   if(!history.length)return;
   future.push(snapshot());
-  nodes=JSON.parse(history.pop());
+  restoreSnapshot(history.pop());
   render();save();updateUndoRedoButtons();toast('Desfeito');
 }
 function redo(){
   if(!future.length)return;
   history.push(snapshot());
-  nodes=JSON.parse(future.pop());
+  restoreSnapshot(future.pop());
   render();save();updateUndoRedoButtons();toast('Refeito');
 }
 function updateUndoRedoButtons(){
@@ -1809,6 +1919,9 @@ document.getElementById('btn-dir').onclick=()=>{
   reorganize('Disposição: '+lbl);
 };
 document.getElementById('btn-present').onclick=()=>{ closeFab();togglePresentation(); };
+document.getElementById('sp-minus').onclick=()=>adjustSpacing(-SPACING_STEP);
+document.getElementById('sp-plus').onclick=()=>adjustSpacing(SPACING_STEP);
+document.getElementById('sp-reset').onclick=()=>setSpacing(0);
 
 /* ── FILE LOAD (.flow) ── */
 document.getElementById('flow-file-input').onchange=e=>{
@@ -1834,6 +1947,7 @@ function applyState(s){
     palette='default';paletteIdx=0;delete document.body.dataset.palette;
   }
   layoutDir=(s.layoutDir&&s.layoutDir!=='lr')?'td':'lr';
+  spacingExtra=clampSpacing(s.spacing);updateSpacingUI();
   document.getElementById('dir-label').innerHTML=(layoutDir==='lr'?'Esquerda → Direita':'Cima ↓ Baixo')+' <kbd>D</kbd>';
   document.getElementById('dir-icon').innerHTML=layoutDir==='lr'?'<path d="M5 12h14M12 5l7 7-7 7"/>':'<path d="M12 5v14M5 12l7 7 7-7"/>';
   history=[];future=[];updateUndoRedoButtons();
@@ -1842,7 +1956,7 @@ function applyState(s){
   save();
 }
 function currentStateObj(){
-  return {nodes:JSON.parse(JSON.stringify(nodes)),dark:darkMode,palette,layoutDir};
+  return {nodes:JSON.parse(JSON.stringify(nodes)),dark:darkMode,palette,layoutDir,spacing:spacingExtra};
 }
 function doExportFlow(filename){
   const json=JSON.stringify(currentStateObj());
@@ -2060,6 +2174,7 @@ function save(){
   projects[currentProjectId].dark=darkMode;
   projects[currentProjectId].palette=palette;
   projects[currentProjectId].layoutDir=layoutDir;
+  projects[currentProjectId].spacing=spacingExtra;
   projects[currentProjectId].updated=Date.now();
   persistProjectsIndex();
   tbProject.textContent=projects[currentProjectId].name;
@@ -2068,12 +2183,15 @@ function loadCurrentProject(){
   const p=projects[currentProjectId];
   if(!p){ nodes=[];return; }
   nodes=JSON.parse(JSON.stringify(p.nodes||[])).map(n=>({icon:'',color:'',...n}));
+  /* lê o espaçamento ANTES de setDark(): ele chama save() e sobrescreveria p.spacing */
+  const savedSpacing=clampSpacing(p.spacing);
   setDark(!!p.dark);
   palette=palettes.includes(p.palette)?p.palette:'default';
   paletteIdx=palettes.indexOf(palette);
   document.body.dataset.palette=palette==='default'?'':palette;
   if(customColors)applyCustomColors(customColors);
   layoutDir=p.layoutDir==='td'?'td':'lr';
+  spacingExtra=savedSpacing;updateSpacingUI();
   document.getElementById('dir-label').innerHTML=(layoutDir==='lr'?'Esquerda → Direita':'Cima ↓ Baixo')+' <kbd>D</kbd>';
   document.getElementById('dir-icon').innerHTML=layoutDir==='lr'?'<path d="M5 12h14M12 5l7 7-7 7"/>':'<path d="M12 5v14M5 12l7 7 7-7"/>';
   tbProject.textContent=p.name;
@@ -2157,7 +2275,7 @@ async function newProject(){
   if(!v)return;
   const id=uid();
   const root=makeNode('Ideia Principal','Clique duplo para focar',80,120,null,'💡','');
-  projects[id]={name:v,nodes:[root],dark:darkMode,palette:'default',layoutDir:'lr',updated:Date.now()};
+  projects[id]={name:v,nodes:[root],dark:darkMode,palette:'default',layoutDir:'lr',spacing:0,updated:Date.now()};
   currentProjectId=id;
   persistProjectsIndex();
   loadCurrentProject();layoutTree();render();setTimeout(()=>fitAll(false),80);
@@ -2234,6 +2352,8 @@ document.addEventListener('keydown',e=>{
     const k=e.key.toLowerCase();
     if(k==='n'){ openRootModal();return; }
     if(k==='o'){ reorganize();return; }
+    if(k===','){ adjustSpacing(-SPACING_STEP);return; }
+    if(k==='.'){ adjustSpacing(SPACING_STEP);return; }
     if(k==='p'){ togglePresentation();return; }
     if(k==='c'){ document.getElementById('btn-custom-colors').click();return; }
     if(k==='d'){ document.getElementById('btn-dir').click();return; }
@@ -2259,6 +2379,7 @@ window.addEventListener('resize',()=>render());
     [['Conceito A','Primeiro ramo','🅰️'],['Conceito B','Segundo ramo','🅱️'],['Conceito C','Terceiro ramo','🔤']]
     .forEach((d,i)=>nodes.push(makeNode(d[0],d[1],400,60+i*200,root.id,d[2],'')));
   }
+  updateSpacingUI();
   layoutTree();render();
   updateUndoRedoButtons();
   setTimeout(()=>fitAll(false),100);
