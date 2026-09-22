@@ -369,7 +369,7 @@ body.presenting.show-controls #fab-wrap *{
 /* ═════ PRESENT FOCUS ═════ */
 .node.present-focus{
   z-index:99990!important;
-  box-shadow:0 0 0 9999px rgba(4,5,12,.7),var(--shadow-lg)!important;
+  box-shadow:var(--shadow-lg)!important;
   transform:none!important;cursor:default!important;
 }
 #pcount{
@@ -600,13 +600,16 @@ body.presenting.show-controls #fab-wrap *{
 /* ═════ CONTROLE DE ESPAÇAMENTO (modo edição) ═════ */
 #spacing-ctl{
   position:fixed;right:20px;bottom:calc(68px + env(safe-area-inset-bottom));z-index:9999;
+  display:flex;flex-direction:column;gap:6px;align-items:flex-end;
+}
+.sp-row{
   display:flex;align-items:center;gap:2px;
   background:var(--panel);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   border:1px solid var(--panel-b);border-radius:50px;
   padding:4px 5px 4px 13px;box-shadow:var(--shadow-sm);color:var(--sub);
   font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
 }
-#spacing-ctl .sp-lbl{display:flex;align-items:center;gap:7px;margin-right:4px;}
+.sp-row .sp-lbl{display:flex;align-items:center;gap:7px;margin-right:4px;}
 .sp-btn{
   width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;flex-shrink:0;
   background:transparent;color:var(--sub);
@@ -617,15 +620,16 @@ body.presenting.show-controls #fab-wrap *{
 .sp-btn:hover:not(:disabled){background:var(--c0);color:#fff;transform:scale(1.08);}
 .sp-btn:active:not(:disabled){transform:scale(.94);}
 .sp-btn:disabled{opacity:.3;cursor:default;}
-#sp-val{min-width:36px;text-align:center;color:var(--text);letter-spacing:0;font-variant-numeric:tabular-nums;}
-#sp-reset{font-size:13px;margin-left:2px;}
+.sp-val{min-width:36px;text-align:center;color:var(--text);letter-spacing:0;font-variant-numeric:tabular-nums;}
+.sp-reset{font-size:13px;margin-left:2px;}
 body.presenting #spacing-ctl{display:none!important;}
 @media(max-width:600px){
-  #spacing-ctl{right:14px;bottom:calc(62px + env(safe-area-inset-bottom));padding-left:10px;}
-  #spacing-ctl .sp-txt{display:none;}
+  #spacing-ctl{right:14px;bottom:calc(62px + env(safe-area-inset-bottom));}
+  .sp-row{padding-left:10px;}
+  .sp-row .sp-txt{display:none;}
 }
 
-/* ═════ TOAST ═════ */
+/* ═════ TOAST ═════ *//* ═════ TOAST ═════ */
 #toast-wrap{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:9999999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;}
 .toast{
   background:var(--text);color:var(--bg);
@@ -761,17 +765,29 @@ body.presenting #spacing-ctl{display:none!important;}
 
 <!-- Controle de espaçamento entre nós (modo edição) -->
 <div id="spacing-ctl" role="group" aria-label="Espaçamento entre nós">
-  <span class="sp-lbl" title="Afasta ou aproxima os nós igualmente na vertical e na horizontal">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M12 2v20M5 9l-3 3 3 3M19 9l3 3-3 3M9 5l3-3 3 3M9 19l3 3 3-3"/></svg>
-    <span class="sp-txt">Espaço</span>
-  </span>
-  <button class="sp-btn" id="sp-minus" title="Aproximar nós (,)" aria-label="Aproximar nós">−</button>
-  <span id="sp-val" title="Espaçamento extra aplicado (px)">0</span>
-  <button class="sp-btn" id="sp-plus" title="Afastar nós (.)" aria-label="Afastar nós">+</button>
-  <button class="sp-btn" id="sp-reset" title="Espaçamento padrão" aria-label="Restaurar espaçamento padrão">⟲</button>
+  <div class="sp-row" data-axis="x">
+    <span class="sp-lbl" title="Afasta ou aproxima os nós na horizontal">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M5 9l-3 3 3 3M19 9l3 3-3 3"/></svg>
+      <span class="sp-txt">Horiz.</span>
+    </span>
+    <button class="sp-btn" id="sp-x-minus" title="Aproximar horizontal (,)" aria-label="Aproximar espaçamento horizontal">−</button>
+    <span class="sp-val" id="sp-x-val" title="Espaçamento horizontal extra (px)">0</span>
+    <button class="sp-btn" id="sp-x-plus" title="Afastar horizontal (.)" aria-label="Afastar espaçamento horizontal">+</button>
+    <button class="sp-btn sp-reset" id="sp-x-reset" title="Espaçamento horizontal padrão" aria-label="Restaurar espaçamento horizontal">⟲</button>
+  </div>
+  <div class="sp-row" data-axis="y">
+    <span class="sp-lbl" title="Afasta ou aproxima os nós na vertical">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M9 5l3-3 3 3M9 19l3 3 3-3"/></svg>
+      <span class="sp-txt">Vert.</span>
+    </span>
+    <button class="sp-btn" id="sp-y-minus" title="Aproximar vertical (Shift+,)" aria-label="Aproximar espaçamento vertical">−</button>
+    <span class="sp-val" id="sp-y-val" title="Espaçamento vertical extra (px)">0</span>
+    <button class="sp-btn" id="sp-y-plus" title="Afastar vertical (Shift+.)" aria-label="Afastar espaçamento vertical">+</button>
+    <button class="sp-btn sp-reset" id="sp-y-reset" title="Espaçamento vertical padrão" aria-label="Restaurar espaçamento vertical">⟲</button>
+  </div>
 </div>
 
-<!-- Mode badge -->
+<!-- Mode badge --><!-- Mode badge -->
 <div id="modeBadge"><span class="dot"></span><span id="modeLabel">Modo Edição</span></div>
 
 <!-- Presentation progress bar + counter -->
@@ -993,7 +1009,7 @@ let darkMode=false, presentationMode=false;
 let layoutDir='lr';
 /* Espaçamento extra (px) somado IGUALMENTE aos intervalos horizontal e vertical.
    Persistido por projeto e respeitado por layoutTree() / "Organizar". */
-let spacingExtra=0;
+let spacingX=0, spacingY=0;
 const SPACING_STEP=20, SPACING_MIN=-40, SPACING_MAX=300;
 let palette='default';
 const palettes=['default','ocean','forest','sunset','mono'];
@@ -1067,12 +1083,17 @@ function hexToRgba(hex,alpha){
 /* ── LAYOUT ── */
 const HGAP=320,VGAP=170,TGAP=230,TROW=310;
 function clampSpacing(v){ v=Number(v); if(!isFinite(v))v=0; return Math.max(SPACING_MIN,Math.min(SPACING_MAX,Math.round(v))); }
-/* Intervalos efetivos = base + espaçamento extra (o mesmo valor nos dois eixos) */
-function gapH(){ return HGAP+spacingExtra; }   /* LR: entre níveis (horizontal)  */
-function gapV(){ return VGAP+spacingExtra; }   /* LR: entre irmãos (vertical)    */
-function gapT(){ return TGAP+spacingExtra; }   /* TD: entre irmãos (horizontal)  */
-function gapR(){ return TROW+spacingExtra; }   /* TD: entre níveis (vertical)    */
-/* Intervalo efetivo por eixo da direção atual: {x, y} */
+/* Espaçamento horizontal e vertical são independentes e sempre se referem
+   aos eixos da TELA (x/y), não à direção da árvore — por isso o mesmo
+   spacingX afeta o intervalo entre NÍVEIS no modo LR (que anda em x) e o
+   intervalo entre IRMÃOS no modo TD (que também anda em x), e vice-versa
+   para spacingY. Assim os dois controles continuam fazendo sentido ao
+   trocar a disposição (D). */
+function gapH(){ return HGAP+spacingX; }   /* LR: entre níveis   → eixo x */
+function gapV(){ return VGAP+spacingY; }   /* LR: entre irmãos   → eixo y */
+function gapT(){ return TGAP+spacingX; }   /* TD: entre irmãos   → eixo x */
+function gapR(){ return TROW+spacingY; }   /* TD: entre níveis   → eixo y */
+/* Intervalo efetivo por eixo de TELA, na direção atual: {x, y} */
 function axisGaps(){ return layoutDir==='lr'?{x:gapH(),y:gapV()}:{x:gapT(),y:gapR()}; }
 function measureSub(id){
   const c=ch(id);
@@ -1178,20 +1199,28 @@ async function reorganize(msg){
    Afasta/aproxima os nós o MESMO tanto (px) nos dois eixos. Preserva a
    disposição atual (inclusive ajustes manuais), expandindo a partir do
    centro da tela. O valor fica salvo e é aplicado por "Organizar". */
-let spacingBusy=false, spacingQueued=null;
+let spacingBusy=false;
+const spacingQueued={x:null,y:null};
 function updateSpacingUI(){
-  const v=document.getElementById('sp-val');if(!v)return;
-  v.textContent=(spacingExtra>0?'+':spacingExtra<0?'−':'')+Math.abs(spacingExtra);
-  document.getElementById('sp-minus').disabled=spacingExtra<=SPACING_MIN;
-  document.getElementById('sp-plus').disabled=spacingExtra>=SPACING_MAX;
-  document.getElementById('sp-reset').disabled=spacingExtra===0;
+  const vx=document.getElementById('sp-x-val'),vy=document.getElementById('sp-y-val');
+  if(!vx||!vy)return;
+  vx.textContent=(spacingX>0?'+':spacingX<0?'−':'')+Math.abs(spacingX);
+  vy.textContent=(spacingY>0?'+':spacingY<0?'−':'')+Math.abs(spacingY);
+  document.getElementById('sp-x-minus').disabled=spacingX<=SPACING_MIN;
+  document.getElementById('sp-x-plus').disabled=spacingX>=SPACING_MAX;
+  document.getElementById('sp-x-reset').disabled=spacingX===0;
+  document.getElementById('sp-y-minus').disabled=spacingY<=SPACING_MIN;
+  document.getElementById('sp-y-plus').disabled=spacingY>=SPACING_MAX;
+  document.getElementById('sp-y-reset').disabled=spacingY===0;
 }
-async function setSpacing(target){
+/* axis: 'x' (horizontal) ou 'y' (vertical) — controlados de forma independente */
+async function setSpacingAxis(axis,target){
   if(presentationMode)return;
   target=clampSpacing(target);
-  if(spacingBusy){ spacingQueued=target;return; }   /* cliques rápidos acumulam */
+  const cur=axis==='x'?spacingX:spacingY;
+  if(spacingBusy){ spacingQueued[axis]=target;return; }   /* cliques rápidos acumulam */
   if(isAnimatingLayout)return;
-  if(target===spacingExtra){
+  if(target===cur){
     toast(target>=SPACING_MAX?'Espaçamento máximo':target<=SPACING_MIN?'Espaçamento mínimo':'Espaçamento padrão');
     return;
   }
@@ -1199,7 +1228,7 @@ async function setSpacing(target){
   viewport.style.pointerEvents='none';
   pushHistory();
   const before=axisGaps();
-  spacingExtra=target;
+  if(axis==='x')spacingX=target;else spacingY=target;
   const after=axisGaps();
   const fx=after.x/before.x, fy=after.y/before.y;
   /* âncora: centro da tela em coordenadas do mapa */
@@ -1214,14 +1243,19 @@ async function setSpacing(target){
   render();save();
   viewport.style.pointerEvents='';
   isAnimatingLayout=false;spacingBusy=false;
-  if(spacingQueued!==null){
-    const q=spacingQueued;spacingQueued=null;
-    if(q!==spacingExtra)setSpacing(q);
+  if(spacingQueued.x!==null){
+    const q=spacingQueued.x;spacingQueued.x=null;
+    if(q!==spacingX){setSpacingAxis('x',q);return;}
+  }
+  if(spacingQueued.y!==null){
+    const q=spacingQueued.y;spacingQueued.y=null;
+    if(q!==spacingY){setSpacingAxis('y',q);return;}
   }
 }
-function adjustSpacing(delta){
-  const base=spacingQueued!==null?spacingQueued:spacingExtra;
-  setSpacing(base+delta);
+function adjustSpacingAxis(axis,delta){
+  const queued=spacingQueued[axis];
+  const base=queued!==null?queued:(axis==='x'?spacingX:spacingY);
+  setSpacingAxis(axis,base+delta);
 }
 
 /* ── RENDER ── */
@@ -1339,11 +1373,15 @@ function zoomToNode(id,smooth=true,targetScale=1.7){
 }
 
 /* ── HISTORY (undo/redo) ── */
-function snapshot(){ return JSON.stringify({nodes,spacing:spacingExtra}); }
+function snapshot(){ return JSON.stringify({nodes,spacingX,spacingY}); }
 function restoreSnapshot(str){
   const o=JSON.parse(str);
-  if(Array.isArray(o)){ nodes=o; }               /* formato antigo */
-  else{ nodes=o.nodes||[]; spacingExtra=clampSpacing(o.spacing); }
+  if(Array.isArray(o)){ nodes=o; }               /* formato antigo (sem espaçamento) */
+  else{
+    nodes=o.nodes||[];
+    if('spacingX' in o || 'spacingY' in o){ spacingX=clampSpacing(o.spacingX);spacingY=clampSpacing(o.spacingY); }
+    else{ const v=clampSpacing(o.spacing);spacingX=v;spacingY=v; }   /* formato antigo (espaçamento único) */
+  }
   updateSpacingUI();
 }
 function pushHistory(){
@@ -1919,9 +1957,12 @@ document.getElementById('btn-dir').onclick=()=>{
   reorganize('Disposição: '+lbl);
 };
 document.getElementById('btn-present').onclick=()=>{ closeFab();togglePresentation(); };
-document.getElementById('sp-minus').onclick=()=>adjustSpacing(-SPACING_STEP);
-document.getElementById('sp-plus').onclick=()=>adjustSpacing(SPACING_STEP);
-document.getElementById('sp-reset').onclick=()=>setSpacing(0);
+document.getElementById('sp-x-minus').onclick=()=>adjustSpacingAxis('x',-SPACING_STEP);
+document.getElementById('sp-x-plus').onclick=()=>adjustSpacingAxis('x',SPACING_STEP);
+document.getElementById('sp-x-reset').onclick=()=>setSpacingAxis('x',0);
+document.getElementById('sp-y-minus').onclick=()=>adjustSpacingAxis('y',-SPACING_STEP);
+document.getElementById('sp-y-plus').onclick=()=>adjustSpacingAxis('y',SPACING_STEP);
+document.getElementById('sp-y-reset').onclick=()=>setSpacingAxis('y',0);
 
 /* ── FILE LOAD (.flow) ── */
 document.getElementById('flow-file-input').onchange=e=>{
@@ -1947,7 +1988,9 @@ function applyState(s){
     palette='default';paletteIdx=0;delete document.body.dataset.palette;
   }
   layoutDir=(s.layoutDir&&s.layoutDir!=='lr')?'td':'lr';
-  spacingExtra=clampSpacing(s.spacing);updateSpacingUI();
+  if('spacingX' in s || 'spacingY' in s){ spacingX=clampSpacing(s.spacingX);spacingY=clampSpacing(s.spacingY); }
+  else{ const v=clampSpacing(s.spacing);spacingX=v;spacingY=v; }   /* migração de arquivos .flow antigos */
+  updateSpacingUI();
   document.getElementById('dir-label').innerHTML=(layoutDir==='lr'?'Esquerda → Direita':'Cima ↓ Baixo')+' <kbd>D</kbd>';
   document.getElementById('dir-icon').innerHTML=layoutDir==='lr'?'<path d="M5 12h14M12 5l7 7-7 7"/>':'<path d="M12 5v14M5 12l7 7 7-7"/>';
   history=[];future=[];updateUndoRedoButtons();
@@ -1956,7 +1999,7 @@ function applyState(s){
   save();
 }
 function currentStateObj(){
-  return {nodes:JSON.parse(JSON.stringify(nodes)),dark:darkMode,palette,layoutDir,spacing:spacingExtra};
+  return {nodes:JSON.parse(JSON.stringify(nodes)),dark:darkMode,palette,layoutDir,spacingX,spacingY};
 }
 function doExportFlow(filename){
   const json=JSON.stringify(currentStateObj());
@@ -2174,7 +2217,8 @@ function save(){
   projects[currentProjectId].dark=darkMode;
   projects[currentProjectId].palette=palette;
   projects[currentProjectId].layoutDir=layoutDir;
-  projects[currentProjectId].spacing=spacingExtra;
+  projects[currentProjectId].spacingX=spacingX;
+  projects[currentProjectId].spacingY=spacingY;
   projects[currentProjectId].updated=Date.now();
   persistProjectsIndex();
   tbProject.textContent=projects[currentProjectId].name;
@@ -2183,15 +2227,17 @@ function loadCurrentProject(){
   const p=projects[currentProjectId];
   if(!p){ nodes=[];return; }
   nodes=JSON.parse(JSON.stringify(p.nodes||[])).map(n=>({icon:'',color:'',...n}));
-  /* lê o espaçamento ANTES de setDark(): ele chama save() e sobrescreveria p.spacing */
-  const savedSpacing=clampSpacing(p.spacing);
+  /* lê o espaçamento ANTES de setDark(): ele chama save() e sobrescreveria os campos */
+  let savedSpacingX,savedSpacingY;
+  if('spacingX' in p || 'spacingY' in p){ savedSpacingX=clampSpacing(p.spacingX);savedSpacingY=clampSpacing(p.spacingY); }
+  else{ const v=clampSpacing(p.spacing);savedSpacingX=v;savedSpacingY=v; }   /* migração de projetos antigos */
   setDark(!!p.dark);
   palette=palettes.includes(p.palette)?p.palette:'default';
   paletteIdx=palettes.indexOf(palette);
   document.body.dataset.palette=palette==='default'?'':palette;
   if(customColors)applyCustomColors(customColors);
   layoutDir=p.layoutDir==='td'?'td':'lr';
-  spacingExtra=savedSpacing;updateSpacingUI();
+  spacingX=savedSpacingX;spacingY=savedSpacingY;updateSpacingUI();
   document.getElementById('dir-label').innerHTML=(layoutDir==='lr'?'Esquerda → Direita':'Cima ↓ Baixo')+' <kbd>D</kbd>';
   document.getElementById('dir-icon').innerHTML=layoutDir==='lr'?'<path d="M5 12h14M12 5l7 7-7 7"/>':'<path d="M12 5v14M5 12l7 7 7-7"/>';
   tbProject.textContent=p.name;
@@ -2275,7 +2321,7 @@ async function newProject(){
   if(!v)return;
   const id=uid();
   const root=makeNode('Ideia Principal','Clique duplo para focar',80,120,null,'💡','');
-  projects[id]={name:v,nodes:[root],dark:darkMode,palette:'default',layoutDir:'lr',spacing:0,updated:Date.now()};
+  projects[id]={name:v,nodes:[root],dark:darkMode,palette:'default',layoutDir:'lr',spacingX:0,spacingY:0,updated:Date.now()};
   currentProjectId=id;
   persistProjectsIndex();
   loadCurrentProject();layoutTree();render();setTimeout(()=>fitAll(false),80);
@@ -2352,8 +2398,10 @@ document.addEventListener('keydown',e=>{
     const k=e.key.toLowerCase();
     if(k==='n'){ openRootModal();return; }
     if(k==='o'){ reorganize();return; }
-    if(k===','){ adjustSpacing(-SPACING_STEP);return; }
-    if(k==='.'){ adjustSpacing(SPACING_STEP);return; }
+    if(e.key===','&&e.shiftKey){ adjustSpacingAxis('y',-SPACING_STEP);return; }   /* < : aproximar vertical */
+    if(e.key==='.'&&e.shiftKey){ adjustSpacingAxis('y',SPACING_STEP);return; }   /* > : afastar vertical   */
+    if(k===','){ adjustSpacingAxis('x',-SPACING_STEP);return; }
+    if(k==='.'){ adjustSpacingAxis('x',SPACING_STEP);return; }
     if(k==='p'){ togglePresentation();return; }
     if(k==='c'){ document.getElementById('btn-custom-colors').click();return; }
     if(k==='d'){ document.getElementById('btn-dir').click();return; }
